@@ -45,5 +45,10 @@ namespace WebSocket_
         {
             Debug.LogError("WebSocket error: " + e.Message);
         }
+
+        public void Send_Message(string message)
+        {
+            _webSocket.Send(message);
+        }
     }
 }

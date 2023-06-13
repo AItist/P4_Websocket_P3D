@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static PaintIn3D.P3dWindow;
 
-namespace main
+namespace Management
 {
     public class MainManager : MonoBehaviour
     {
@@ -55,11 +55,21 @@ namespace main
 
         #region Start
 
+        private void Initialize()
+        {
+            Debug.Log("Manager initialized.");
+        }
+
         private void Start()
         {
             if (ImgQueue == null)
             {
                 ImgQueue = new Queue<Data.ImageData>();
+            }
+
+            if (instance == null)
+            {
+                Instance.Initialize();
             }
 
             // 웹소켓 생성 지시
@@ -89,11 +99,13 @@ namespace main
         /// 웹소켓에서 받은 이미지 데이터 인스턴스를 관리자 인스턴스로 가져온다.
         /// </summary>
         /// <param name="imageData"> 이미지 데이터 인스턴스 </param>
-        public void GetImageData(Data.ImageData imageData)
+        public void EnqueueImageData(Data.ImageData imageData)
         {
             if (imageData == null) { return; }
 
             ImgQueue.Enqueue(imageData);
+
+            Debug.Log("OnMessage");
         }
 
         /// <summary>
