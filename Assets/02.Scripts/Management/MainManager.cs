@@ -53,6 +53,20 @@ namespace main
         public Material[] _mats;
         public P3dPaintableTexture[] _textures;
 
+        #region Start
+
+        private void Start()
+        {
+            if (websocket == null)
+            {
+                GameObject obj = new GameObject("Websocket");
+                obj.transform.parent = this.transform;
+                websocket = obj.AddComponent<websocket_>();
+            }
+        }
+
+        #endregion Start
+
         #region Events
 
         /// <summary>
