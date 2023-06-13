@@ -186,12 +186,14 @@ namespace WebSocket_
 
                 
 
-                Debug.Log("OnMessage");
+                //Debug.Log("OnMessage");
             }
             catch (Exception ex)
             {
                 Debug.LogError("Error parsing JSON data: " + ex.Message);
             }
+
+            //_webSocket.Send("Hello");
 
             //if (debug_resend)
             //{
