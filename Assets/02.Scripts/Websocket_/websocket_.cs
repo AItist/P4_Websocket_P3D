@@ -16,6 +16,8 @@ using System.Drawing;
 
 using PaintIn3D;
 
+using Data;
+
 public class websocket_ : MonoBehaviour
 {
     private WebSocket _webSocket;
@@ -166,15 +168,21 @@ public class websocket_ : MonoBehaviour
     private void OnMessage(object sender, MessageEventArgs e)
     {
         //Debug.Log($"{_serverUrl} WebSocket message received: " + e.Data);
+        //Debug.Log("OnMessage");
 
         try
         {
-            DataModel data = JsonConvert.DeserializeObject<DataModel>(e.Data);
+            ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
 
             //Debug.Log($"data.index : {data.index}");
             //Debug.Log($"data.ret : {data.ret}");
             //Debug.Log($"data.frame : {data.frame}");
+
+            // »õ ¹öÀü
+            //data.ConvertImgString_to_byteArray();
+
             ConvertImgData(data.index.ToString(), data.frame);
+            Debug.Log("OnMessage");
         }
         catch (Exception ex)
         {
@@ -205,9 +213,9 @@ public class websocket_ : MonoBehaviour
     #endregion
 }
 
-public class DataModel
-{
-    public int index { get; set; }
-    public bool ret { get; set; }
-    public string frame { get; set; }
-}
+//public class ImageData
+//{
+//    public int index { get; set; }
+//    public bool ret { get; set; }
+//    public string frame { get; set; }
+//}
