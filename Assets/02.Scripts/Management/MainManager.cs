@@ -34,7 +34,7 @@ namespace main
         /// P3에서 가공된 이미지를 받아오고, \n
         /// 완성된 텍스처를 전달하기 위한 웹소켓 인스턴스
         /// </summary>
-        public websocket_ websocket;
+        public WebSocket_.P4_Websocket websocket;
 
         /// <summary>
         /// 입력 이벤트를 발생시키는 루트 클래스
@@ -57,17 +57,44 @@ namespace main
 
         private void Start()
         {
+            if (ImgQueue == null)
+            {
+                ImgQueue = new Queue<Data.ImageData>();
+            }
+
+            // 웹소켓 생성 지시
             if (websocket == null)
             {
                 GameObject obj = new GameObject("Websocket");
                 obj.transform.parent = this.transform;
-                websocket = obj.AddComponent<websocket_>();
+                websocket = obj.AddComponent<WebSocket_.P4_Websocket>();
             }
+
         }
 
         #endregion Start
 
+        #region Update
+
+        private void Update()
+        {
+            ImgQueue.Clear();
+        }
+
+        #endregion Update
+
         #region Events
+
+        /// <summary>
+        /// 웹소켓에서 받은 이미지 데이터 인스턴스를 관리자 인스턴스로 가져온다.
+        /// </summary>
+        /// <param name="imageData"> 이미지 데이터 인스턴스 </param>
+        public void GetImageData(Data.ImageData imageData)
+        {
+            if (imageData == null) { return; }
+
+            ImgQueue.Enqueue(imageData);
+        }
 
         /// <summary>
         /// 웹소켓에서 텍스처 업데이트시 실행할 이벤트
@@ -85,6 +112,8 @@ namespace main
         #endregion
 
         #region Datas
+
+        public Queue<Data.ImageData> ImgQueue { get; private set; }
 
         private Texture2D websocket_texture2D;
 
