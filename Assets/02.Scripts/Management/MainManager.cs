@@ -2,6 +2,7 @@ using PaintIn3D;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static PaintIn3D.P3dWindow;
 
@@ -46,6 +47,7 @@ namespace Management
         /// 웹소켓으로 받은 텍스처를 업데이트하는 인스턴스
         /// TODO : 이 PaintDecal은 나중에 리스트 또는 사전형 변수로 변경한다.
         /// </summary>
+        public List<PaintIn3D.P3dPaintDecal> paintDecals;
         public PaintIn3D.P3dPaintDecal pDecal;
 
         [Header("paintable resource")]
@@ -65,6 +67,11 @@ namespace Management
             if (ImgQueue == null)
             {
                 ImgQueue = new Queue<Data.ImageData>();
+            }
+
+            if (TextureInImgList == null)
+            {
+                TextureInImgList = new List<Data.ImageData>();
             }
 
             if (instance == null)
@@ -88,7 +95,37 @@ namespace Management
 
         private void Update()
         {
+            if (ImgQueue.Count == 0) { return; }
+
+            int cnt = ImgQueue.Count <= 4 ? ImgQueue.Count : 4;
+            for (int i = 0; i < cnt; i++)
+            {
+                Data.ImageData imgData = ImgQueue.Dequeue();
+
+                imgData.Unity_SetTexture();
+
+                if (imgData.Frame_Texture != null)
+                {
+                    TextureInImgList.Add(imgData);
+                    //TextureInImgList.Append<Data.ImageData>(imgData);
+                }
+            }
+
+            if (TextureInImgList.Count > 0)
+            {                
+                ApplyTextures();
+            }
+
             ImgQueue.Clear();
+        }
+
+        /// <summary>
+        /// 작성 완료된 텍스쳐들을 업데이트한다.
+        /// </summary>
+        void ApplyTextures()
+        {
+            // TODO: 이미지 텍스처 생성까지 관리자 Update에서 작성함 다음 단계 진행
+            Update_Websocket_texture2D();
         }
 
         #endregion Update
@@ -105,7 +142,7 @@ namespace Management
 
             ImgQueue.Enqueue(imageData);
 
-            Debug.Log("OnMessage");
+            //Debug.Log("OnMessage");
         }
 
         /// <summary>
@@ -114,7 +151,17 @@ namespace Management
         /// <param name="tex"></param>
         void Update_Websocket_texture2D()
         {
-            pDecal.IsClick = true;
+            if (TextureInImgList == null) { return; }
+
+            //List<Data.ImageData> lst = TextureInImgList.
+
+            //Debug.Log(pDecal);
+            //pDecal.IsClick = true;
+            paintDecals[0].IsClick = true;
+
+            paintDecals[0].Texture = TextureInImgList[0].Frame_Texture;
+            //pDecal.Texture = websocket_texture2D;
+
             // 입력 이벤트 발생 준비
             cwInputManager.IsClick = true;
 
@@ -126,6 +173,8 @@ namespace Management
         #region Datas
 
         public Queue<Data.ImageData> ImgQueue { get; private set; }
+
+        public List<Data.ImageData> TextureInImgList { get; set; }
 
         private Texture2D websocket_texture2D;
 

@@ -137,7 +137,7 @@ namespace PaintIn3D
 		{
 			// pressure는 범용으로 입력 이벤트가 발생하는 것
 			// IsClick은 특정해서 이 이벤트를 받을지 결정하는 것
-			
+
 			// pressure, IsClick 모두 클릭됐다는 소리임
 			//if (pressure != 0 && !IsClick)
 			//{
@@ -145,6 +145,7 @@ namespace PaintIn3D
 			//}
 
 			//IsClick = false;
+			Debug.Log($"{IsClick} {pressure}");
 
 			if (modifiers != null && modifiers.Count > 0)
 			{
