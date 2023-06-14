@@ -139,13 +139,13 @@ namespace PaintIn3D
 			// IsClick은 특정해서 이 이벤트를 받을지 결정하는 것
 
 			// pressure, IsClick 모두 클릭됐다는 소리임
-			//if (pressure != 0 && !IsClick)
-			//{
-			//	return;
-			//}
+			if (pressure != 0 && !IsClick)
+			{
+				return;
+			}
 
-			//IsClick = false;
-			Debug.Log($"{IsClick} {pressure}");
+			IsClick = false;
+			//Debug.Log($"{IsClick} {pressure}");
 
 			if (modifiers != null && modifiers.Count > 0)
 			{

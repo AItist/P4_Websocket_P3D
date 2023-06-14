@@ -89,5 +89,22 @@ namespace Data
                 return (ImageData) formatter.Deserialize(memoryStream);
             }
         }
+
+        public Texture2D CopyTexture()
+        {
+            if (Frame_Texture == null)
+            {
+                throw new Exception($"{index} webcam texture is null");
+            }
+
+            Texture2D outputTexture = new Texture2D(Frame_Texture.width, Frame_Texture.height);
+
+            Color[] pixels = Frame_Texture.GetPixels();
+
+            outputTexture.SetPixels(pixels);
+            outputTexture.Apply();
+
+            return outputTexture;
+        }
     }
 }
