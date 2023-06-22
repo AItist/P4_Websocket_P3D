@@ -198,10 +198,10 @@ namespace Management
 
         private void LateUpdate()
         {
-            if (!isDecal_updated) { return; }
-            IsDecal_updated = false;
+            //if (!isDecal_updated) { return; }
+            //IsDecal_updated = false;
 
-            ExportTextures();
+            //ExportTextures();
         }
 
         /// <summary>
