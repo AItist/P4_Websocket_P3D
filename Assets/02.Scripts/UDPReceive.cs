@@ -49,4 +49,12 @@ public class UDPReceive : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (receiveThread != null)
+        {
+            receiveThread.Abort();
+        }
+    }
+
 }

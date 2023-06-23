@@ -6,22 +6,20 @@ using System.Threading;
 
 public class AnimationCode : MonoBehaviour
 {
-
+    public UDPReceive udpReceive;
     public GameObject[] Body;
-    List<string> lines;
-    int counter = 0;
+
     // Start is called before the first frame update
     void Start()
     {
-        lines = System.IO.File.ReadLines("Assets/AnimationFile.txt").ToList();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        //print(lines[0]);
-        //return;
-        string[] points = lines[counter].Split(',');
+        string data = udpReceive.data;
+        string[] points = data.Split(',');
 
         for (int i = 0; i <= 32; i++)
         {
@@ -32,8 +30,6 @@ public class AnimationCode : MonoBehaviour
         }
 
 
-        counter += 1;
-        if (counter == lines.Count) { counter = 0; }
         Thread.Sleep(30);
     }
 }   
