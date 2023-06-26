@@ -15,6 +15,7 @@ namespace Data
         public int index { get; set; }
         public bool ret { get; set; }
         public string frame { get; set; }
+        public string poseframe { get; set; }
 #pragma warning restore IDE1006 // 명명 스타일
 
         /// <summary>

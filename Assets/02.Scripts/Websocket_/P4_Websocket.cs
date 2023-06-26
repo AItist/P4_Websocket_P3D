@@ -145,6 +145,11 @@ namespace WebSocket_
                 ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
                 data.ConvertImgString_to_byteArray();
 
+                //Debug.Log(e.Data.ToString());
+
+                //Debug.Log(data.poseframe.ToString());
+                Debug.Log(data.index);
+
                 // 주 관리자 코드로 이미지 데이터 인큐
                 Management.MainManager.Instance.EnqueueImageData(data);
 

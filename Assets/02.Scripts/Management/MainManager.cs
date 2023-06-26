@@ -68,6 +68,11 @@ namespace Management
                 ImgQueue = new Queue<Data.ImageData>();
             }
 
+            if (ImgDics == null)
+            {
+                ImgDics = new Dictionary<int, Data.ImageData>();
+            }
+
             if (TextureInImgList == null)
             {
                 TextureInImgList = new List<Data.ImageData>();
@@ -110,7 +115,7 @@ namespace Management
             }
 
             if (TextureInImgList.Count > 0)
-            {                
+            {
                 ApplyTextures();
             }
 
@@ -143,6 +148,14 @@ namespace Management
 
             ImgQueue.Enqueue(imageData);
 
+            if (ImgDics.ContainsKey(imageData.index))
+            {
+                ImgDics[imageData.index] = imageData;
+            }
+            else
+            {
+                ImgDics.Add(imageData.index, imageData);
+            }
             //Debug.Log("OnMessage");
         }
 
@@ -172,6 +185,8 @@ namespace Management
         /// 웹소켓에서 받은 이미지 데이터 받는 큐
         /// </summary>
         public Queue<Data.ImageData> ImgQueue { get; private set; }
+
+        public Dictionary<int, Data.ImageData> ImgDics { get; private set; }
 
         /// <summary>
         /// Update를 통해 Texture 이미지를 생성한 인스턴스만 모은 리스트
