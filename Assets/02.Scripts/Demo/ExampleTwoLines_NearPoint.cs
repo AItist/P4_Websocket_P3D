@@ -28,15 +28,44 @@ public struct Line3D
 
 public class ExampleTwoLines_NearPoint : MonoBehaviour
 {
-    public List<Line3D> Lines;
+    [SerializeField]
+    private bool debug_points;
+    private bool debugCurrent_points;
+
+    [SerializeField]
+    private bool debug_midpoint;
+    private bool debugCurrent_midpoint;
+
+    private void ToggleRender_points(bool debug)
+    {
+        foreach (Transform t in points)
+        {
+            if (t.GetComponent<MeshRenderer>() != null)
+            {
+                t.GetComponent<MeshRenderer>().enabled = debug;
+            }
+        }
+    }
+
+    private void ToggleRender_midpoint(bool debug)
+    {
+        if (midPoint != null)
+        {
+            midPoint.GetComponent<MeshRenderer>().enabled = debug;
+        }
+    }
+
+    public List<LineCode> lineCodes = new List<LineCode>();
+
+    //public List<Line3D> Lines;
     public List<Transform> points;
     public Transform midPoint;
     
-    public static (Vector3, Vector3) ClosestPointsOnTwoLines(Line3D line1, Line3D line2)
+    public static (Vector3, Vector3) ClosestPointsOnTwoLines(LineCode line1, LineCode line2)
     {
-        Vector3 u = line1.P2 - line1.P1;
-        Vector3 v = line2.P2 - line2.P1;
-        Vector3 w = line1.P1 - line2.P1;
+        Vector3 u = line1.destination.position - line1.origin.position;
+        Vector3 v = line2.destination.position - line2.origin.position;
+        Vector3 w = line1.origin.position - line2.origin.position;
 
         float a = Vector3.Dot(u, u);
         float b = Vector3.Dot(u, v);
@@ -59,9 +88,9 @@ public class ExampleTwoLines_NearPoint : MonoBehaviour
         }
 
         // Closest point on line1 to line2
-        Vector3 pointOnLine1 = line1.P1 + sc * u;
+        Vector3 pointOnLine1 = line1.origin.position + sc * u;
         // Closest point on line2 to line1
-        Vector3 pointOnLine2 = line2.P1 + tc * v;
+        Vector3 pointOnLine2 = line2.origin.position + tc * v;
 
         return (pointOnLine1, pointOnLine2);
     }
@@ -79,15 +108,27 @@ public class ExampleTwoLines_NearPoint : MonoBehaviour
 
     void Update()
     {
+        if (debugCurrent_points != debug_points)
+        {
+            debugCurrent_points = debug_points;
+            ToggleRender_points(debug_points);
+        }
+
+        if (debugCurrent_midpoint != debug_midpoint)
+        {
+            debugCurrent_midpoint = debug_midpoint;
+            ToggleRender_midpoint(debug_midpoint);
+        }
+
         // Lines의 수를 기반으로
         // points의 수가 Lines - 1인지 확인한다.
-        if (points.Count != Lines.Count - 1)
+        if (points.Count != lineCodes.Count - 1)
         {
             // lines - 1보다 points의 수가 작을때
-            if (points.Count < Lines.Count - 1)
+            if (points.Count < lineCodes.Count - 1)
             {
                 // points를 추가한다.
-                int diff = (Lines.Count - 1) - points.Count;
+                int diff = (lineCodes.Count - 1) - points.Count;
 
                 for (int i = 0; i < diff; i++)
                 {
@@ -98,10 +139,10 @@ public class ExampleTwoLines_NearPoint : MonoBehaviour
             }
 
             // lines - 1보다 points의 수가 클때
-            else if (points.Count > Lines.Count - 1)
+            else if (points.Count > lineCodes.Count - 1)
             {
                 // points를 차이만큼 제거한다.
-                int diff = points.Count - (Lines.Count - 1);
+                int diff = points.Count - (lineCodes.Count - 1);
 
                 points.RemoveRange(0, diff);
             }
@@ -110,11 +151,11 @@ public class ExampleTwoLines_NearPoint : MonoBehaviour
         Vector3 sum = Vector3.zero;
         int count = 0;
 
-        for (int i = 0; i < Lines.Count; i++)
+        for (int i = 0; i < lineCodes.Count; i++)
         {
-            for (int j = i + 1; j < Lines.Count; j++)
+            for (int j = i + 1; j < lineCodes.Count; j++)
             {
-                var _closestPoints = ClosestPointsOnTwoLines(Lines[i], Lines[j]);
+                var _closestPoints = ClosestPointsOnTwoLines(lineCodes[i], lineCodes[j]);
                 sum += _closestPoints.Item1;
                 sum += _closestPoints.Item2;
                 count += 2;
