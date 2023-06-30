@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LineCode : MonoBehaviour
 {
+    public bool debug;
+    private bool debug_current;
 
     LineRenderer lineRenderer;
 
@@ -21,6 +23,12 @@ public class LineCode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (debug_current != debug)
+        {
+            debug_current = debug;
+            lineRenderer.enabled = debug;
+        }
+
         lineRenderer.SetPosition(0, origin.position);
         lineRenderer.SetPosition(1, destination.position);
     }

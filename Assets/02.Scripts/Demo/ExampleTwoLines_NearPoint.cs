@@ -1,29 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static CW.Common.CwInputManager;
 
 [System.Serializable]
 public struct Line3D
-{
-    public Transform P1_transform; public Transform P2_transform;
+{   
+    public Vector3 P1 { get; set; }
 
-    
-    public Vector3 P1
-    {
-        get
-        {
-            return P1_transform.position;
-        }
-    }
-
-    public Vector3 P2
-    {
-        get
-        {
-            return P2_transform.position;
-        }
-    }
+    public Vector3 P2 { get; set; }
 }
 
 public class ExampleTwoLines_NearPoint : MonoBehaviour
