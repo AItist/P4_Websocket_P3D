@@ -17,6 +17,8 @@ namespace PaintIn3D
 			set { isClick = value; }
 		}
 
+		public bool debug;
+
 		/// <summary>Only the P3dModel/P3dPaintable GameObjects whose layers are within this mask will be eligible for painting.</summary>
 		public LayerMask Layers { set { layers = value; } get { return layers; } } [SerializeField] private LayerMask layers = -1;
 
@@ -138,13 +140,17 @@ namespace PaintIn3D
 			// pressure는 범용으로 입력 이벤트가 발생하는 것
 			// IsClick은 특정해서 이 이벤트를 받을지 결정하는 것
 
-			// pressure, IsClick 모두 클릭됐다는 소리임
-			if (pressure != 0 && !IsClick)
+			if (!debug)
 			{
-				return;
+				// pressure, IsClick 모두 클릭됐다는 소리임
+				if (pressure != 0 && !IsClick)
+				{
+					return;
+				}
+
+				IsClick = false;
 			}
 
-			IsClick = false;
 			//Debug.Log($"{IsClick} {pressure}");
 
 			if (modifiers != null && modifiers.Count > 0)
@@ -327,8 +333,9 @@ namespace PaintIn3D
 			TARGET tgt; TARGET[] tgts; GetTargets(out tgt, out tgts);
 
 			Draw("isClick", "webcam related click control");
+            Draw("debug", "normal click");
 
-			BeginError(Any(tgts, t => t.Layers == 0 && t.TargetModel == null));
+            BeginError(Any(tgts, t => t.Layers == 0 && t.TargetModel == null));
 				Draw("layers", "Only the P3dModel/P3dPaintable GameObjects whose layers are within this mask will be eligible for painting.");
 			EndError();
 			Draw("group", "Only the P3dPaintableTexture components with a matching group will be painted by this component.");

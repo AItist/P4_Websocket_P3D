@@ -1,3 +1,4 @@
+using Data;
 using PaintIn3D;
 using System;
 using System.Collections;
@@ -37,19 +38,19 @@ namespace Management
         /// </summary>
         public WebSocket_.P4_Websocket websocket;
 
+
+        [Header("Decal reference structure")]
+        /// <summary>
+        /// 카메라별 데칼 처리 변수 구조체
+        /// </summary>
+        public List<DecalContainer> decalContainer;
+
+
+        [Header("P3d resources")]
         /// <summary>
         /// 입력 이벤트를 발생시키는 루트 클래스
         /// </summary>
-        [Header("P3d resources")]
         public CW.Common.CwInputManager cwInputManager;
-
-        /// <summary>
-        /// 웹소켓으로 받은 텍스처를 업데이트하는 인스턴스
-        /// TODO : 이 PaintDecal은 나중에 리스트 또는 사전형 변수로 변경한다.
-        /// </summary>
-        public List<PaintIn3D.P3dPaintDecal> paintDecals;
-
-        [Header("paintable resource")]
         public P3dPaintable _paintable;
         private Material[] _mats;
         private P3dPaintableTexture[] _textures;
@@ -107,6 +108,7 @@ namespace Management
                 Data.ImageData imgData = ImgQueue.Dequeue();
 
                 imgData.Unity_SetTexture();
+                imgData.stage3_SetTexture = true;
 
                 if (imgData.Frame_Texture != null)
                 {
@@ -156,7 +158,7 @@ namespace Management
             {
                 ImgDics.Add(imageData.index, imageData);
             }
-            //Debug.Log("OnMessage");
+            imageData.stage2_AssignImgDics = true;
         }
 
         /// <summary>
@@ -167,9 +169,16 @@ namespace Management
         {
             if (TextureInImgList == null) { return; }
 
-            // TODO : 현재 paintDecals 1번만 대응하도록 설정됨. 추후 여러 대의 웹캠 환경 모사하도록 조정 필요
-            paintDecals[0].IsClick = true;
-            paintDecals[0].Texture = TextureInImgList[0].CopyTexture();
+            //// TODO : 현재 paintDecals 1번만 대응하도록 설정됨. 추후 여러 대의 웹캠 환경 모사하도록 조정 필요
+            //paintDecals[0].IsClick = true;
+            //paintDecals[0].Texture = TextureInImgList[0].CopyTexture();
+            foreach (Data.ImageData i in TextureInImgList)
+            {
+                //Debug.Log(i);
+                //Debug.Log(i.index);
+                decalContainer[i.index].paintDecal.IsClick = true;
+                decalContainer[i.index].paintDecal.Texture = i.CopyTexture();
+            }
 
             // 입력 이벤트 발생 준비
             cwInputManager.IsClick = true;
@@ -213,10 +222,10 @@ namespace Management
 
         private void LateUpdate()
         {
-            //if (!isDecal_updated) { return; }
-            //IsDecal_updated = false;
+            if (!isDecal_updated) { return; }
+            IsDecal_updated = false;
 
-            //ExportTextures();
+            ExportTextures();
         }
 
         /// <summary>
@@ -320,7 +329,7 @@ namespace Management
         {
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(dict);
 
-            websocket.SendDataToServer(json);
+            websocket.Send_Message(json);
         }
 
         #endregion

@@ -26,16 +26,6 @@ namespace WebSocket_
         private WebSocket _webSocket;
         public string _serverUrl = "ws://localhost:8081"; 
 
-        //private byte[] decompressedData;
-
-        public void SendDataToServer(string data)
-        {
-            //Debug.Log($"Data received, length {data}");
-            //Debug.Log($"Data received, length {data.Length}");
-
-            Send_Message(data);
-        }
-
         private void Start()
         {
             _webSocket = new WebSocket(_serverUrl);
@@ -66,30 +56,6 @@ namespace WebSocket_
 
         #region Update
 
-        ///// <summary>
-        ///// Update 메서드 안에서 Texture2D를 생성하고 반환한다.
-        ///// </summary>
-        ///// <param name="tWidth"></param>
-        ///// <param name="tHeight"></param>
-        ///// <param name="tDepth"></param>
-        ///// <param name="decompressedImg"></param>
-        ///// <returns> Texture2D </returns>
-        //Texture2D Update_CreateTexture2D(int tWidth, int tHeight, int tDepth, byte[] decompressedImg)
-        //{
-        //    if (decompressedData == null) { return null; }
-
-        //    //int tWidth = 640;
-        //    //int tHeight = 480;
-        //    //int tDepth = 3;
-
-        //    // Step 3: Create a new Texture2D and load the decompressed data
-        //    Texture2D recoveredTexture = new Texture2D(tWidth, tHeight, TextureFormat.RGB24, false);
-        //    recoveredTexture.LoadRawTextureData(decompressedData);
-        //    recoveredTexture.Apply();
-
-        //    return recoveredTexture;
-        //}
-
         /// <summary>
         /// Manager에 생성된 텍스처 전달
         /// </summary>
@@ -98,24 +64,6 @@ namespace WebSocket_
         {
             //main.MainManager.Instance.Websocket_texture2D = tex;
         }
-
-        //private void Update()
-        //{
-        //    int tWidth = 640;
-        //    int tHeight = 480;
-        //    int tDepth = 3;
-
-        //    Texture2D recoveredTexture = Update_CreateTexture2D(tWidth, tHeight, tDepth, decompressedData);
-
-        //    //// 디버깅
-        //    //SaveTextureAsPNG(recoveredTexture, "/Hello.png");
-
-        //    if (recoveredTexture == null) { return; }
-
-        //    // 생성한 텍스처를 목표한 paintDecal에 업데이트 한다.
-        //    Update_SendTextureToP3d(recoveredTexture);
-
-        //}
 
         #endregion
 
@@ -144,27 +92,17 @@ namespace WebSocket_
             {
                 ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
                 data.ConvertImgString_to_byteArray();
+                data.ConvertPoseString_to_float3Array();
 
-                //Debug.Log(e.Data.ToString());
-
-                //Debug.Log(data.poseframe.ToString());
-                Debug.Log(data.index);
+                data.stage1_InitComplete = true;
 
                 // 주 관리자 코드로 이미지 데이터 인큐
                 Management.MainManager.Instance.EnqueueImageData(data);
-
-                // Debug
-                //Debug.Log($"data.index : {data.index}");
-                //Debug.Log($"data.ret : {data.ret}");
-                //Debug.Log($"data.frame : {data.frame}");
             }
             catch (Exception ex)
             {
                 Debug.LogError("Error parsing JSON data: " + ex.Message);
             }
-
-            // P5 debug
-            //_webSocket.Send("Hello");
         }
 
         private void OnClose(object sender, CloseEventArgs e)

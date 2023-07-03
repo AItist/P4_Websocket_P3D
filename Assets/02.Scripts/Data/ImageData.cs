@@ -6,6 +6,7 @@ using System.IO;
 using WebSocketSharp;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
+using Environment;
 
 namespace Data
 {
@@ -23,11 +24,25 @@ namespace Data
         /// </summary>
         public byte[] Frame_decoded { get; set; }
 
+        /// <summary>
+        /// Frame_decoded byte[] 배열을 Texture2D로 변환한 것.
+        /// </summary>
         public Texture2D Frame_Texture { get; set; }
 
-        private int imgWidth = 640;
-        private int imgHeight = 480;
+        /// <summary>
+        /// poseframe의 string 값을 float3[] 배열로 변환한 것
+        /// </summary>
+        public Unity.Mathematics.float3[] PoseArray { get; set; }
+
+        private int imgWidth = 1280;
+        private int imgHeight = 720;
         private int imgDepth = 3;
+        public int posePointLength = GlobalSetting.POSE_RIGGINGPOINTS_COUNT;
+
+        public bool stage1_InitComplete = false; // 웹소켓 생성단계 완료, 관리자 코드 EnqueueImageData 이전 상태값 변경
+        public bool stage2_AssignImgDics = false; // 관리자 코드에서 ImgDics에 배치 후 상태값 변경
+        public bool stage3_SetTexture = false; // 관리자 코드에서 Unity_SetTexture 실행 후 변경
+
 
         /// <summary>
         /// 문자열 이미지를 byte[] 배열로 변환한다.
@@ -58,6 +73,21 @@ namespace Data
 #pragma warning restore IDE0063 // 간단한 'using' 문 사용
         }
 
+        public void ConvertPoseString_to_float3Array()
+        {
+            PoseArray = new Unity.Mathematics.float3[posePointLength];
+
+            string[] _points = poseframe.Split(',');
+
+            for (int i = 0; i < posePointLength; i++)
+            {
+                float x = float.Parse(_points[0 + (i * 3)]) / 100;
+                float y = float.Parse(_points[1 + (i * 3)]) / 100;
+                float z = float.Parse(_points[2 + (i * 3)]) / 300;
+                PoseArray[i] = new Unity.Mathematics.float3(x, y, z);
+            }
+        }
+
         public void Unity_SetTexture()
         {
             Frame_Texture = Unity_CreateTexture2D(imgWidth, imgHeight, imgDepth);
@@ -77,18 +107,6 @@ namespace Data
             recoveredTexture.Apply();
 
             return recoveredTexture;
-        }
-
-        public ImageData DeepCopy()
-        {
-            using (var memoryStream = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(memoryStream, this);
-                memoryStream.Position = 0;
-
-                return (ImageData) formatter.Deserialize(memoryStream);
-            }
         }
 
         public Texture2D CopyTexture()

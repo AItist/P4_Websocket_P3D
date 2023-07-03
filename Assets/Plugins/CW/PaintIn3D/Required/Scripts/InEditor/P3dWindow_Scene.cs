@@ -114,6 +114,7 @@ namespace PaintIn3D
 						if (GUILayout.Button(new GUIContent("Export", "Export this material and all its textures to your project as assets?"), EditorStyles.miniButton, GUILayout.ExpandWidth(false)) == true)
 						{
 							var path = AssetDatabase.GetAssetPath(material);
+							Debug.Log(path);
 							var dir  = string.IsNullOrEmpty(path) == false ? System.IO.Path.GetDirectoryName(path) : "Assets";
 
 							path = EditorUtility.SaveFilePanelInProject("Export Material & Textures", name, "mat", "Export Your Material and Textures", dir);

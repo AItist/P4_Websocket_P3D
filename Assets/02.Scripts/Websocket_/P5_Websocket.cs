@@ -76,7 +76,10 @@ namespace WebSocket_
             try
             {
                 string str = System.Text.Encoding.UTF8.GetString(e.RawData);
+                //byte[] test_imgValue = Convert.FromBase64String(str);
+                //decompressedData = test_imgValue;
 
+                //return;
                 Dictionary<string, string> data = JsonConvert.DeserializeObject<Dictionary<string, string>>(str);
 
                 Dictionary<string, byte[]> imgData = new Dictionary<string, byte[]>();
