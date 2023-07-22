@@ -2,13 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public struct Line3D
-{   
-    public Vector3 P1 { get; set; }
-
-    public Vector3 P2 { get; set; }
-}
 
 public class ExampleTwoLines_NearPoint : MonoBehaviour
 {
@@ -145,6 +138,7 @@ public class ExampleTwoLines_NearPoint : MonoBehaviour
                 count += 2;
 
                 Vector3 __midPoint = (_closestPoints.Item1 + _closestPoints.Item2) / 2;
+                Debug.Log($"{j} {__midPoint}");
                 points[j - 1].transform.position = __midPoint;
             }
         }

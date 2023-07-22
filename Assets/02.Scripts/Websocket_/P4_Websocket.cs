@@ -90,13 +90,21 @@ namespace WebSocket_
 
             try
             {
+                //Debug.Log(e.Data.ToString());
                 ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
                 data.ConvertImgString_to_byteArray();
                 data.ConvertPoseString_to_float3Array();
+                //data.stage1_InitComplete = true;
 
-                data.stage1_InitComplete = true;
+                ////string info = "";
+                //Debug.Log($"count: {data.cam_count}");
+                //Debug.Log($"pose {data.pose_string}");
+                //Debug.Log($"i0 {data.img_0}");
+                //Debug.Log($"i1 {data.img_1}");
+                //Debug.Log($"i2 {data.img_2}");
+                //Debug.Log($"i3 {data.img_3}");
 
-                // 주 관리자 코드로 이미지 데이터 인큐
+                //// 주 관리자 코드로 이미지 데이터 인큐
                 Management.MainManager.Instance.EnqueueImageData(data);
             }
             catch (Exception ex)

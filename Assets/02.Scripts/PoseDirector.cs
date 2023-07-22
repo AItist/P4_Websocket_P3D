@@ -12,9 +12,24 @@ public class PoseDirector : MonoBehaviour
     /// </summary>
     public List<Transform> riggingPoints_mediapipe;
 
+    /// <summary>
+    /// 포즈 적용
+    /// </summary>
+    /// <param name="data"></param>
+    public void ApplyPose(Data.ImageData data)
+    {
+        Unity.Mathematics.float3[] poses = data.PoseArray;
+        //Debug.Log($"{poses.Length}, {GlobalSetting.POSE_RIGGINGPOINTS_COUNT}");
+        for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
+        {
+            riggingPoints_mediapipe[i].position = poses[i];
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
+        return;
         var dic = MainManager.Instance.ImgDics;
         //Debug.Log(dic.Keys.Count);
 
@@ -53,16 +68,20 @@ public class PoseDirector : MonoBehaviour
                         }
                     }
                 }
+
+                // 최종 중점을 구한다.
+                Vector3 _midPoint = sum / count;
+
+                Debug.Log(_midPoint);
+
+                riggingPoints_mediapipe[i].position = _midPoint;
             }
-            catch (System.Exception)
+            catch (System.Exception e)
             {
                 // TODO: 켜지지 않은 웹캠 인덱스에 대해 접근을 시도하다가 오류가 발생하는 지점이 있음
-            }
-            
+                //Debug.Log(e);
 
-            // 최종 중점을 구한다.
-            Vector3 _midPoint = sum / count;
-            riggingPoints_mediapipe[i].position = _midPoint;
+            }
         }
     }
 

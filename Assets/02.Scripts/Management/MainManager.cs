@@ -52,6 +52,7 @@ namespace Management
         /// </summary>
         public CW.Common.CwInputManager cwInputManager;
         public P3dPaintable _paintable;
+        public PoseDirector poseDirector;
         private Material[] _mats;
         private P3dPaintableTexture[] _textures;
 
@@ -102,19 +103,29 @@ namespace Management
         {
             if (ImgQueue.Count == 0) { return; }
 
-            int cnt = ImgQueue.Count <= 4 ? ImgQueue.Count : 4;
-            for (int i = 0; i < cnt; i++)
+            Data.ImageData iData = ImgQueue.Dequeue();
+
+            iData.Unity_SetTexture();
+            iData.stage3_SetTexture = true;
+
+            if (iData.IsTextureExisted())
             {
-                Data.ImageData imgData = ImgQueue.Dequeue();
-
-                imgData.Unity_SetTexture();
-                imgData.stage3_SetTexture = true;
-
-                if (imgData.Frame_Texture != null)
-                {
-                    TextureInImgList.Add(imgData);
-                }
+                TextureInImgList.Add(iData);
             }
+
+            //int cnt = ImgQueue.Count <= 4 ? ImgQueue.Count : 4;
+            //for (int i = 0; i < cnt; i++)
+            //{
+            //    Data.ImageData imgData = ImgQueue.Dequeue();
+
+            //    imgData.Unity_SetTexture();
+            //    imgData.stage3_SetTexture = true;
+
+            //    if (imgData.Frame_Texture != null)
+            //    {
+            //        TextureInImgList.Add(imgData);
+            //    }
+            //}
 
             if (TextureInImgList.Count > 0)
             {
@@ -130,7 +141,7 @@ namespace Management
         void ApplyTextures()
         {
             // FIX : 이미지 텍스처 생성까지 관리자 Update에서 작성함 다음 단계 진행
-            Update_Websocket_texture2D();
+            Update_Websocket_pose_texture2D();
 
             // 작업 후 이미지 리스트 클리어
             TextureInImgList.Clear();
@@ -150,14 +161,14 @@ namespace Management
 
             ImgQueue.Enqueue(imageData);
 
-            if (ImgDics.ContainsKey(imageData.index))
-            {
-                ImgDics[imageData.index] = imageData;
-            }
-            else
-            {
-                ImgDics.Add(imageData.index, imageData);
-            }
+            //if (ImgDics.ContainsKey(imageData.index))
+            //{
+            //    ImgDics[imageData.index] = imageData;
+            //}
+            //else
+            //{
+            //    ImgDics.Add(imageData.index, imageData);
+            //}
             imageData.stage2_AssignImgDics = true;
         }
 
@@ -165,20 +176,51 @@ namespace Management
         /// 주 관리자 Update에서 텍스처 업데이트시 실행할 이벤트
         /// </summary>
         /// <param name="tex"></param>
-        void Update_Websocket_texture2D()
+        void Update_Websocket_pose_texture2D()
         {
             if (TextureInImgList == null) { return; }
 
             //// TODO : 현재 paintDecals 1번만 대응하도록 설정됨. 추후 여러 대의 웹캠 환경 모사하도록 조정 필요
             //paintDecals[0].IsClick = true;
             //paintDecals[0].Texture = TextureInImgList[0].CopyTexture();
-            foreach (Data.ImageData i in TextureInImgList)
+            if (TextureInImgList.Count == 0) { return; }
+
+            Data.ImageData iData = TextureInImgList[0];
+
+            // 포즈 지시기에 포즈 적용 지시
+            poseDirector.ApplyPose(iData);
+            
+            if (iData.Img1_Texture != null)
             {
-                //Debug.Log(i);
-                //Debug.Log(i.index);
-                decalContainer[i.index].paintDecal.IsClick = true;
-                decalContainer[i.index].paintDecal.Texture = i.CopyTexture();
+                decalContainer[0].paintDecal.IsClick = true;
+                decalContainer[0].paintDecal.Texture = iData.CopyTexture(0);
             }
+
+            if (iData.Img2_Texture != null)
+            {
+                decalContainer[1].paintDecal.IsClick = true;
+                decalContainer[1].paintDecal.Texture = iData.CopyTexture(1);
+            }
+
+            if (iData.Img3_Texture != null)
+            {
+                decalContainer[2].paintDecal.IsClick = true;
+                decalContainer[2].paintDecal.Texture = iData.CopyTexture(2);
+            }
+
+            if (iData.Img4_Texture != null)
+            {
+                decalContainer[3].paintDecal.IsClick = true;
+                decalContainer[3].paintDecal.Texture = iData.CopyTexture(3);
+            }
+
+            //foreach (Data.ImageData i in TextureInImgList)
+            //{
+            //    //Debug.Log(i);
+            //    //Debug.Log(i.index);
+            //    decalContainer[i.index].paintDecal.IsClick = true;
+            //    decalContainer[i.index].paintDecal.Texture = i.CopyTexture();
+            //}
 
             // 입력 이벤트 발생 준비
             cwInputManager.IsClick = true;
