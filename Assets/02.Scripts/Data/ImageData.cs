@@ -169,11 +169,13 @@ namespace Data
 #pragma warning restore IDE0063 // 간단한 'using' 문 사용
         }
 
+        /// <summary>
+        /// 이 포즈 인덱스가 연산 대상인가?
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
         public bool isIndexCanProcess(int index)
         {
-            //index *= 3; // 3의 실수배만큼 
-            //return true;
-
             // 지금 아래 조건식에서 얘는 좀 보정이 필요함
             // 실수 하나에 대한 조건만 따지는데 그런 상황이 아님.
             if (index == 0 ||
@@ -234,13 +236,6 @@ namespace Data
                 float y = float.Parse(_points[1 + (i * 3)]) * (1 / 2.4f);
                 float z = float.Parse(_points[2 + (i * 3)]);
 
-                //if (index != 0)
-                //{
-                //    x /= 100;
-                //    y /= 100;
-                //    z /= 100;
-                //}
-
                 if (index == 0)
                 {
                     GlobalSetting.SetVectorMinMax(x, y, z);
@@ -256,16 +251,16 @@ namespace Data
                 }
             }
 
-            if (index == 0)
-            {
-                array[33] = (array[23] + array[24]) / 2 + new Unity.Mathematics.float3(0, 0.3f, 0);
-                array[34] = array[33] + new Unity.Mathematics.float3(0, 0.2f, 0);
-                array[35] = array[34] + new Unity.Mathematics.float3(0, 0.2f, 0);
-                array[36] = array[35] + new Unity.Mathematics.float3(0, 0.2f, 0);
-                array[37] = array[36] + new Unity.Mathematics.float3(-0.1f, 0.2f, 0); // Right shoulder
-                array[38] = array[36] + new Unity.Mathematics.float3(0.1f, 0.2f, 0); // Left shoulder
-                array[39] = array[36] + new Unity.Mathematics.float3(0, 0.22f, 0); // Neck
-            }
+            array[33] = (array[23] + array[24]) / 2 + new Unity.Mathematics.float3(0, 0.3f, 0);
+            array[34] = array[33] + new Unity.Mathematics.float3(0, 0.2f, 0);
+            array[35] = array[34] + new Unity.Mathematics.float3(0, 0.2f, 0);
+            array[36] = array[35] + new Unity.Mathematics.float3(0, 0.2f, 0);
+            array[37] = array[36] + new Unity.Mathematics.float3(-0.1f, 0.2f, 0); // Right shoulder
+            array[38] = array[36] + new Unity.Mathematics.float3(0.1f, 0.2f, 0); // Left shoulder
+            array[39] = array[36] + new Unity.Mathematics.float3(0, 0.22f, 0); // Neck
+            //if (index == 0)
+            //{
+            //}
 
             if (index == 0)
             {
@@ -296,81 +291,6 @@ namespace Data
             ConvertPtf3(2); // Pose_1
             ConvertPtf3(3); // Pose_2
             ConvertPtf3(4); // Pose_3
-
-            return;
-
-            PoseArray = new Unity.Mathematics.float3[posePointLength];
-
-            //string[] _points = poseframe.Split(',');
-            string[] _points = pose_string.Split(','); // 99개
-
-            float _x = 0;
-            float _y = 0;
-            float _z = 0;
-            for (int i = 0; i < posePointLength - 7; i++)
-            {
-                //if (!isIndexCanProcess(i)) continue;
-                // 본래 현재 해상도 1280 * 720으로 값이 들어오고 있다.
-                // 현재 / 100만 한 상태
-                // x축 : 0 ~ 12.8 (이 범위 밖으로 나간 값은 AI의 추정값)
-                // y축 : 0 ~ 7.2 (특이사항 위와 같음)
-
-                int cW = GlobalSetting.camWidth;
-                int cH = GlobalSetting.camHeight;
-
-                float x = float.Parse(_points[0 + (i * 3)]) * (1.48f / 3.2f);
-                //float x = (float.Parse(_points[0 + (i * 3)]) - cW / 2) / 100;
-                //float x = (float.Parse(_points[0 + (i * 3)]) - cW / 2) * (2.545f / 6.4f) / 100;
-
-                float y = float.Parse(_points[1 + (i * 3)]) * (1 / 2.4f);
-                //float y = (float.Parse(_points[1 + (i * 3)]) - cH / 2) / 100;
-                //float y = (float.Parse(_points[1 + (i * 3)]) - cH / 2) * (1.42f / 3.6f) / 100;
-
-                float z = float.Parse(_points[2 + (i * 3)]);
-                //float z = float.Parse(_points[2 + (i * 3)]) / 300;
-                //float z = 0;
-
-                //Debug.Log($"{x}, {y}, {z}");
-
-                if (i == 0)
-                {
-                    _x = x;
-                }
-                else if (i == 1)
-                {
-                    _y = y;
-                }
-                else if (i == 2)
-                {
-                    _z = z;
-                }
-                
-                GlobalSetting.SetVectorMinMax(x, y, z);
-                PoseArray[i] = new Unity.Mathematics.float3(x, y, z);
-            }
-
-            for (int i = 0; i < posePointLength; i++)
-            {
-                if (!isIndexCanProcess(i))
-                {
-                    PoseArray[i] = new Unity.Mathematics.float3(0, 0, 0);
-                }
-            }
-
-            //PoseArray[33] = PoseArray[23];
-            PoseArray[33] = (PoseArray[23] + PoseArray[24]) / 2 + new Unity.Mathematics.float3(0, 0.3f, 0);
-            PoseArray[34] = PoseArray[33] + new Unity.Mathematics.float3(0, 0.2f, 0);
-            PoseArray[35] = PoseArray[34] + new Unity.Mathematics.float3(0, 0.2f, 0);
-            PoseArray[36] = PoseArray[35] + new Unity.Mathematics.float3(0, 0.2f, 0);
-            PoseArray[37] = PoseArray[36] + new Unity.Mathematics.float3(-0.1f, 0.2f, 0); // Right shoulder
-            PoseArray[38] = PoseArray[36] + new Unity.Mathematics.float3(0.1f, 0.2f, 0); // Left shoulder
-            PoseArray[39] = PoseArray[36] + new Unity.Mathematics.float3(0, 0.22f, 0); // Neck
-            //PoseArray[34] = (PoseArray[11] + PoseArray[12]) / 2;
-            //Debug.Log(PoseArray[33]);
-
-            // [33] = ([23] + [24]) / 2
-
-            //Debug.Log($"pos : {_x}, {_y}, {_z}");
         }
 
         public void ConvertPoseCenter_to_intArray()

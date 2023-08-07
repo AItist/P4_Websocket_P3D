@@ -147,12 +147,20 @@ namespace PaintIn3D
 				{
 					return;
 				}
+				//if (pressure == 0)
+				//{
+				//	if (!IsClick)
+				//	{
+				//		return;
+				//	}
+				//}
 
 				IsClick = false;
 			}
 
 			//Debug.Log($"{IsClick} {pressure}");
 
+			// TODO : 111 P3d Click Event IsClick 검증
 			if (modifiers != null && modifiers.Count > 0)
 			{
 				CwHelper.BeginSeed(seed);

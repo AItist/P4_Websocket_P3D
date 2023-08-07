@@ -7,6 +7,15 @@ using Environment;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor.GettingStarted;
 
+[System.Serializable]
+public struct PoseContainer
+{
+    public Transform rig_centerSpine;
+    public Transform cameraRoot;
+    public Transform poseRoot;
+    public List<Transform> riggs_pose;
+}
+
 public class PoseDirector : MonoBehaviour
 {
     /// <summary>
@@ -14,33 +23,14 @@ public class PoseDirector : MonoBehaviour
     /// </summary>
     public List<Transform> riggingPoints_mediapipe;
     public List<Transform> riggingPoints_finalIK;
-    public Transform riggingPoint_centerSpine;
-    public Transform rig_LeftShoulder;
-    public Transform rig_RightShoulder;
 
-    [Header("스케일 조정을 위한 개체")]
-    public Transform L_O_Shoulder;
-    public Transform R_O_Shoulder;
+    public List<PoseContainer> poseContainer;
 
-    public Transform Rescale_Root;
-
-    [Header("카메라 이동 기본 위치")]
-    public Transform cameraRoot;
     public Vector3 camera1_pos;
 
-    public Transform poseRoot;
-
-    [Button]
-    public void Rescaling()
+    public float[] GetPoseScale(List<Transform> riggingPoints_)
     {
-        float[] diff = GetPoseScale();
-
-        Rescale_Root.localScale = Vector3.one * (diff[1] / 2 - 0.6f);
-    }
-
-    public float[] GetPoseScale()
-    {
-        List<Transform> riggingPoints_ = riggingPoints_finalIK;
+        //List<Transform> riggingPoints_ = riggingPoints_finalIK;
 
         Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
         float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
@@ -69,42 +59,70 @@ public class PoseDirector : MonoBehaviour
     /// <param name="data"></param>
     public void ApplyPose(Data.ImageData data)
     {
-        //List<Transform> riggingPoints_ = riggingPoints_mediapipe;
-        List<Transform> riggingPoints_ = riggingPoints_finalIK;
+        _ApplyPose(data, 0);
+        _ApplyPose(data, 1);
+        _ApplyPose(data, 2);
+        _ApplyPose(data, 3);
+    }
 
-        Unity.Mathematics.float3[] poses = data.PoseArray;
+    private void _ApplyPose(Data.ImageData data, int index)
+    {
+        List<Transform> riggingPoints_ = null;
+        Unity.Mathematics.float3[] poses = null;
+        Transform centerSpine = null;
+        Transform camRoot = null;
+        Transform poseRoot = null;
+        if (index == 0)
+        {
+            riggingPoints_ = poseContainer[0].riggs_pose;
+            poses = data.PoseArray_0;
+            centerSpine = poseContainer[0].rig_centerSpine;
+            camRoot = poseContainer[0].cameraRoot;
+            poseRoot = poseContainer[0].poseRoot;
+        }
+        else if (index == 1)
+        {
+            riggingPoints_ = poseContainer[1].riggs_pose;
+            poses = data.PoseArray_1;
+            centerSpine = poseContainer[1].rig_centerSpine;
+            camRoot = poseContainer[1].cameraRoot;
+            poseRoot = poseContainer[1].poseRoot;
+        }
+        else if (index == 2)
+        {
+            riggingPoints_ = poseContainer[2].riggs_pose;
+            poses = data.PoseArray_2;
+            centerSpine = poseContainer[2].rig_centerSpine;
+            camRoot = poseContainer[2].cameraRoot;
+            poseRoot = poseContainer[2].poseRoot;
+        }
+        else if (index == 3)
+        {
+            riggingPoints_ = poseContainer[3].riggs_pose;
+            poses = data.PoseArray_3;
+            centerSpine = poseContainer[3].rig_centerSpine;
+            camRoot = poseContainer[3].cameraRoot;
+            poseRoot = poseContainer[3].poseRoot;
+        }
 
-        riggingPoint_centerSpine.localScale = Vector3.one;
+        if (poses == null ||  poses.Length == 0)
+        {
+            //Debug.Log("poses 값이 할당되지 않은 상태입니다.");
+            return;
+        }
 
-        //Debug.Log($"{poses.Length}, {GlobalSetting.POSE_RIGGINGPOINTS_COUNT}");
+        centerSpine.localScale = Vector3.one;
+
         for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
         {
             riggingPoints_[i].position = poses[i];
         }
 
-        float[] diff = GetPoseScale();
-        cameraRoot.position = riggingPoint_centerSpine.position;
-        riggingPoint_centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
-        poseRoot.position = cameraRoot.position;
-
-        //Rescaling();
-        //ApplyCamera(data);
+        float[] diff = GetPoseScale(riggingPoints_);
+        camRoot.position = centerSpine.position;
+        centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
+        poseRoot.position = camRoot.position;
     }
-
-    //private void ApplyCamera(Data.ImageData data)
-    //{
-    //    // 1번 카메라에서 수집된 머리 위치
-    //    Unity.Mathematics.float3 head = data.PoseArray_0[0];
-    //    //Debug.Log($"poseDirector: head {head}");
-
-    //    Transform camera1 = MainManager.Instance.decalContainer[0].originCamera.transform;
-    //    camera1.position = camera1_pos;
-
-    //    //Vector3 trans = new Vector3(-0.1f, 0, 0);
-    //    //Vector3 trans = new Vector3(head.x, head.y, 0);
-
-    //    //camera1.Translate(trans);
-    //}
 
     public static (Vector3, Vector3) ClosestPointsOnTwoLines(Camera line1_originCamera, Data.ImageData line1, Camera line2_originCamera, Data.ImageData line2, int destIndex)
     {
