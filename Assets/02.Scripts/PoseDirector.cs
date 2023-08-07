@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Environment;
+using Sirenix.OdinInspector;
+using Sirenix.OdinInspector.Editor.GettingStarted;
 
 public class PoseDirector : MonoBehaviour
 {
@@ -11,6 +13,55 @@ public class PoseDirector : MonoBehaviour
     /// mediapipe 기준으로 할당된 리깅 포인트 리스트
     /// </summary>
     public List<Transform> riggingPoints_mediapipe;
+    public List<Transform> riggingPoints_finalIK;
+    public Transform riggingPoint_centerSpine;
+    public Transform rig_LeftShoulder;
+    public Transform rig_RightShoulder;
+
+    [Header("스케일 조정을 위한 개체")]
+    public Transform L_O_Shoulder;
+    public Transform R_O_Shoulder;
+
+    public Transform Rescale_Root;
+
+    [Header("카메라 이동 기본 위치")]
+    public Transform cameraRoot;
+    public Vector3 camera1_pos;
+
+    public Transform poseRoot;
+
+    [Button]
+    public void Rescaling()
+    {
+        float[] diff = GetPoseScale();
+
+        Rescale_Root.localScale = Vector3.one * (diff[1] / 2 - 0.6f);
+    }
+
+    public float[] GetPoseScale()
+    {
+        List<Transform> riggingPoints_ = riggingPoints_finalIK;
+
+        Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
+        float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
+        float dist_O_sqr = 0.16158f; // 기본 모델의 어깨간 거리
+        //float dist_O_sqr = (rig_RightShoulder.position - rig_LeftShoulder.position).sqrMagnitude; // 기본 모델의 어깨간 거리
+        float diff = dist_O_sqr / dist_sqr; // (포즈 어깨 / 기본 어깨) 비율
+        //float diff = dist_sqr / dist_O_sqr; // (포즈 어깨 / 기본 어깨) 비율
+
+        //Debug.Log("--------------------");
+        //Debug.Log(dist_sqr);
+        //Debug.Log(dist_O_sqr);
+        //Debug.Log($"diff [dist_O / dist] {diff}");
+        //Debug.Log("Rescale root");
+        //Debug.Log("--------------------");
+
+        float[] result = new float[2];
+        result[0] = dist_sqr;
+        result[1] = diff;
+
+        return result;
+    }
 
     /// <summary>
     /// 포즈 적용
@@ -18,72 +69,42 @@ public class PoseDirector : MonoBehaviour
     /// <param name="data"></param>
     public void ApplyPose(Data.ImageData data)
     {
+        //List<Transform> riggingPoints_ = riggingPoints_mediapipe;
+        List<Transform> riggingPoints_ = riggingPoints_finalIK;
+
         Unity.Mathematics.float3[] poses = data.PoseArray;
+
+        riggingPoint_centerSpine.localScale = Vector3.one;
+
         //Debug.Log($"{poses.Length}, {GlobalSetting.POSE_RIGGINGPOINTS_COUNT}");
         for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
         {
-            riggingPoints_mediapipe[i].position = poses[i];
+            riggingPoints_[i].position = poses[i];
         }
+
+        float[] diff = GetPoseScale();
+        cameraRoot.position = riggingPoint_centerSpine.position;
+        riggingPoint_centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
+        poseRoot.position = cameraRoot.position;
+
+        //Rescaling();
+        //ApplyCamera(data);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        return;
-        var dic = MainManager.Instance.ImgDics;
-        //Debug.Log(dic.Keys.Count);
+    //private void ApplyCamera(Data.ImageData data)
+    //{
+    //    // 1번 카메라에서 수집된 머리 위치
+    //    Unity.Mathematics.float3 head = data.PoseArray_0[0];
+    //    //Debug.Log($"poseDirector: head {head}");
 
-        int activeCount = dic.Keys.Count;
+    //    Transform camera1 = MainManager.Instance.decalContainer[0].originCamera.transform;
+    //    camera1.position = camera1_pos;
 
-        // 포인트 개수만큼 위치추정 진행
-        for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
-        {
-            Vector3 sum = Vector3.zero;
-            int count = 0;
+    //    //Vector3 trans = new Vector3(-0.1f, 0, 0);
+    //    //Vector3 trans = new Vector3(head.x, head.y, 0);
 
-            try
-            {
-                if (activeCount == 1)
-                {
-                    
-                    foreach (var key in dic.Keys)
-                    {
-                        sum = dic[key].PoseArray[i];
-                        count++;
-                    }
-                }
-                else
-                {
-                    var keys = new List<int>(dic.Keys);
-                    var dc = MainManager.Instance.decalContainer;
-
-                    for (int j = 0; j < keys.Count; j++)
-                    {
-                        for (int k = 0; k < keys.Count; k++)
-                        {
-                            var _closestPoints = ClosestPointsOnTwoLines(dc[keys[j]].originCamera, dic[keys[j]], dc[keys[k]].originCamera, dic[keys[k]], i);
-                            sum += _closestPoints.Item1;
-                            sum += _closestPoints.Item2;
-                            count += 2;
-                        }
-                    }
-                }
-
-                // 최종 중점을 구한다.
-                Vector3 _midPoint = sum / count;
-
-                Debug.Log(_midPoint);
-
-                riggingPoints_mediapipe[i].position = _midPoint;
-            }
-            catch (System.Exception e)
-            {
-                // TODO: 켜지지 않은 웹캠 인덱스에 대해 접근을 시도하다가 오류가 발생하는 지점이 있음
-                //Debug.Log(e);
-
-            }
-        }
-    }
+    //    //camera1.Translate(trans);
+    //}
 
     public static (Vector3, Vector3) ClosestPointsOnTwoLines(Camera line1_originCamera, Data.ImageData line1, Camera line2_originCamera, Data.ImageData line2, int destIndex)
     {

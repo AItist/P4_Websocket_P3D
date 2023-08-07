@@ -90,10 +90,11 @@ namespace WebSocket_
 
             try
             {
-                //Debug.Log(e.Data.ToString());
                 ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
                 data.ConvertImgString_to_byteArray();
                 data.ConvertPoseString_to_float3Array();
+                data.ConvertPoseCenter_to_intArray();
+
                 //data.stage1_InitComplete = true;
 
                 ////string info = "";

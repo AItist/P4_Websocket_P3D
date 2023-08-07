@@ -481,6 +481,8 @@ namespace CW.Common
 			set { isClick = value; }
 		}
 
+		public Vector2 customClickVector;
+
 		protected virtual void Update()
 		{
 			// Remove previously up fingers, or mark them as up in case the up event isn't read correctly
@@ -542,9 +544,12 @@ namespace CW.Common
 					//Debug.Log("Hello spacebar");
 
 					//Vector3 vec3 = new Vector3(960, 540, 0);
-					UnityEngine.Vector2 vec2 = new UnityEngine.Vector2(960, 540);
-					//vec2.Set(960, 540);
-					//var pos = (960, 540, 0);
+
+					//UnityEngine.Vector2 vec2 = new UnityEngine.Vector2(960, 540);
+                    UnityEngine.Vector2 vec2 = customClickVector;
+                    
+                    //vec2.Set(960, 540);
+                    //var pos = (960, 540, 0);
 
                     AddFinger(MOUSE_FINGER_INDEX, vec2, 1.0f, true);
 					//AddFinger(MOUSE_FINGER_INDEX, CwInput.GetMousePosition(), 1.0f, true);

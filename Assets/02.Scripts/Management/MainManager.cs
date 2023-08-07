@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using static PaintIn3D.P3dWindow;
+using static PaintIn3D.P3dWindow; 
 
 namespace Management
 {
@@ -54,7 +54,7 @@ namespace Management
         public P3dPaintable _paintable;
         public PoseDirector poseDirector;
         private Material[] _mats;
-        private P3dPaintableTexture[] _textures;
+        private P3dPaintableTexture[] _texture;
 
         #region Start
 
@@ -65,24 +65,19 @@ namespace Management
 
         private void Start()
         {
+            if (instance == null)
+            {
+                Instance.Initialize();
+            }
+
             if (ImgQueue == null)
             {
                 ImgQueue = new Queue<Data.ImageData>();
             }
 
-            if (ImgDics == null)
-            {
-                ImgDics = new Dictionary<int, Data.ImageData>();
-            }
-
             if (TextureInImgList == null)
             {
                 TextureInImgList = new List<Data.ImageData>();
-            }
-
-            if (instance == null)
-            {
-                Instance.Initialize();
             }
 
             // 웹소켓 생성 지시
@@ -98,6 +93,11 @@ namespace Management
         #endregion Start
 
         #region Update
+        public int tstX;
+        public int tstY;
+        public int tstWidth;
+        public int tstHeight;
+        public Vector3 tstImgScale1;
 
         private void Update()
         {
@@ -105,27 +105,18 @@ namespace Management
 
             Data.ImageData iData = ImgQueue.Dequeue();
 
-            iData.Unity_SetTexture();
+            iData.Unity_SetTexture(tstX, tstY, tstWidth, tstHeight);
+            // -----
+
+            decalContainer[0].paintDecal.Scale = tstImgScale1;
+
+            // -----
             iData.stage3_SetTexture = true;
 
             if (iData.IsTextureExisted())
             {
                 TextureInImgList.Add(iData);
             }
-
-            //int cnt = ImgQueue.Count <= 4 ? ImgQueue.Count : 4;
-            //for (int i = 0; i < cnt; i++)
-            //{
-            //    Data.ImageData imgData = ImgQueue.Dequeue();
-
-            //    imgData.Unity_SetTexture();
-            //    imgData.stage3_SetTexture = true;
-
-            //    if (imgData.Frame_Texture != null)
-            //    {
-            //        TextureInImgList.Add(imgData);
-            //    }
-            //}
 
             if (TextureInImgList.Count > 0)
             {
@@ -161,16 +152,10 @@ namespace Management
 
             ImgQueue.Enqueue(imageData);
 
-            //if (ImgDics.ContainsKey(imageData.index))
-            //{
-            //    ImgDics[imageData.index] = imageData;
-            //}
-            //else
-            //{
-            //    ImgDics.Add(imageData.index, imageData);
-            //}
             imageData.stage2_AssignImgDics = true;
         }
+
+        public Vector2 customClickVector;
 
         /// <summary>
         /// 주 관리자 Update에서 텍스처 업데이트시 실행할 이벤트
@@ -214,16 +199,11 @@ namespace Management
                 decalContainer[3].paintDecal.Texture = iData.CopyTexture(3);
             }
 
-            //foreach (Data.ImageData i in TextureInImgList)
-            //{
-            //    //Debug.Log(i);
-            //    //Debug.Log(i.index);
-            //    decalContainer[i.index].paintDecal.IsClick = true;
-            //    decalContainer[i.index].paintDecal.Texture = i.CopyTexture();
-            //}
-
             // 입력 이벤트 발생 준비
             cwInputManager.IsClick = true;
+            cwInputManager.customClickVector = customClickVector;
+
+            // TODO: 0803 클릭 위치 커스텀 설정
 
             IsDecal_updated = true;
         }
@@ -236,8 +216,6 @@ namespace Management
         /// 웹소켓에서 받은 이미지 데이터 받는 큐
         /// </summary>
         public Queue<Data.ImageData> ImgQueue { get; private set; }
-
-        public Dictionary<int, Data.ImageData> ImgDics { get; private set; }
 
         /// <summary>
         /// Update를 통해 Texture 이미지를 생성한 인스턴스만 모은 리스트
@@ -275,50 +253,46 @@ namespace Management
         /// </summary>
         private void ExportTextures()
         {
-            _mats = _paintable.Materials;
-            _textures = _paintable.GetComponents<P3dPaintableTexture>();
+            //_mats = _paintable.Materials;
+            // 여기서 단일 paintable 기준으로 텍스처를 가져온다.
+            _texture = _paintable.GetComponents<P3dPaintableTexture>();
 
             // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
-            Dictionary<string, string> result = GetEncodedTextures(_paintable, _mats, _textures);
+            string result = GetEncodedTexture(_texture);
+            //Dictionary<string, string> result = GetEncodedTexture(_texture);
 
-            // 2: dict json 직렬화 및 서버 전달
+            // 2: string 데이터 직렬화 및 서버 전달
             SerializeAndSendServer(result);
         }
 
         #region 1: Paintable 내부에 있는 모든 textures 문자열 인코딩 후 dict로 반환
 
         /// <summary>
-        /// P3dPaintableTextures 안에 있는 텍스쳐 다 가져오기
+        /// P3dPaintableTextures 안에 있는 텍스쳐 1개 가져오기
         /// </summary>
-        /// <param name="paintable"></param>
-        /// <param name="materials"></param>
         /// <param name="paintableTextures"></param>
-        /// <returns></returns>
-        private Dictionary<string, string> GetEncodedTextures(P3dPaintable paintable, Material[] materials, P3dPaintableTexture[] paintableTextures)
+        /// <returns> 인코딩 완료된 이미지 파일 </returns>
+        private string GetEncodedTexture(P3dPaintableTexture[] paintableTextures)
         {
-            Dictionary<string, string> dict = new Dictionary<string, string>();
+            //Dictionary<string, string> dict = new Dictionary<string, string>();
+            string result = "";
 
-            // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
-            for (var i = 0; i < materials.Length; i++)
+            int i = 0; // _paintable.materials[0]
+            int j = 0; // _paintable.GetComponents<P3ddPaintableTexture>()[0];
+
+            // materials i 와 매칭되는 j만 연산 실행
+            // 기존 materials 같이 갖고왔는데 최종 모델은 무조건 mat 1 tex 1로 정해져 있음.
+            // i == 0 : 아래 조건식의 0은 원래 같이 갖고온 materials 배열의 인덱스 0(1번째)임.
+            // j == 0 : 첫 번째 P3dTexture
+            if (paintableTextures[j].Slot.Index == i)
             {
-                var material = materials[i];
+                byte[] byteArray = GetPaintableTexture(paintableTextures[j]);
+                string encodeStr = encodeString(byteArray);
 
-                for (int j = 0; j < paintableTextures.Length; j++)
-                {
-                    if (paintableTextures[j].Slot.Index == i)
-                    {
-                        byte[] byteArray = GetPaintableTexture(paintableTextures[j]);
-                        string encodeStr = encodeString(byteArray);
-
-                        string key = $"{i},{j}";
-                        dict.Add(key, encodeStr);
-
-                        // 에디터 오류생김 주석걸자.
-                        //Debug.Log($"key : {key} \ndata : {encodeStr}");
-                    }
-                }
+                result = encodeStr;
             }
-            return dict;
+
+            return result;
         }
 
         /// <summary>
@@ -370,6 +344,15 @@ namespace Management
         private void SerializeAndSendServer(Dictionary<string, string> dict)
         {
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(dict);
+
+            websocket.Send_Message(json);
+        }
+
+        private void SerializeAndSendServer(string str)
+        {
+            //Debug.Log(str);
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(str);
+            //Debug.Log(json);
 
             websocket.Send_Message(json);
         }
