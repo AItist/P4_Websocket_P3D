@@ -18,26 +18,16 @@ public struct PoseContainer
 
 public class PoseDirector : MonoBehaviour
 {
-    /// <summary>
-    /// mediapipe 기준으로 할당된 리깅 포인트 리스트
-    /// </summary>
-    public List<Transform> riggingPoints_mediapipe;
-    public List<Transform> riggingPoints_finalIK;
-
     public List<PoseContainer> poseContainer;
 
     public Vector3 camera1_pos;
 
-    public float[] GetPoseScale(List<Transform> riggingPoints_)
+    private float[] GetPoseScale(List<Transform> riggingPoints_)
     {
-        //List<Transform> riggingPoints_ = riggingPoints_finalIK;
-
         Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
         float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
         float dist_O_sqr = 0.16158f; // 기본 모델의 어깨간 거리
-        //float dist_O_sqr = (rig_RightShoulder.position - rig_LeftShoulder.position).sqrMagnitude; // 기본 모델의 어깨간 거리
         float diff = dist_O_sqr / dist_sqr; // (포즈 어깨 / 기본 어깨) 비율
-        //float diff = dist_sqr / dist_O_sqr; // (포즈 어깨 / 기본 어깨) 비율
 
         //Debug.Log("--------------------");
         //Debug.Log(dist_sqr);
@@ -65,6 +55,9 @@ public class PoseDirector : MonoBehaviour
         _ApplyPose(data, 3);
     }
 
+    /// <summary>
+    /// 카메라별 포즈 적용
+    /// </summary>
     private void _ApplyPose(Data.ImageData data, int index)
     {
         List<Transform> riggingPoints_ = null;
@@ -105,6 +98,7 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[3].poseRoot;
         }
 
+        // 현재 포즈값이 넘어오지 않은 상태라면 중단
         if (poses == null ||  poses.Length == 0)
         {
             //Debug.Log("poses 값이 할당되지 않은 상태입니다.");
@@ -122,39 +116,5 @@ public class PoseDirector : MonoBehaviour
         camRoot.position = centerSpine.position;
         centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
         poseRoot.position = camRoot.position;
-    }
-
-    public static (Vector3, Vector3) ClosestPointsOnTwoLines(Camera line1_originCamera, Data.ImageData line1, Camera line2_originCamera, Data.ImageData line2, int destIndex)
-    {
-        Vector3 u = (Vector3)line1.PoseArray[destIndex] - line1_originCamera.transform.position;
-        Vector3 v = (Vector3)line2.PoseArray[destIndex] - line2_originCamera.transform.position;
-        Vector3 w = line1_originCamera.transform.position - line2_originCamera.transform.position;
-
-        float a = Vector3.Dot(u, u);
-        float b = Vector3.Dot(u, v);
-        float c = Vector3.Dot(v, v);
-        float d = Vector3.Dot(u, w);
-        float e = Vector3.Dot(v, w);
-        float D = a * c - b * b;
-
-        float sc, tc;
-        if (D < Mathf.Epsilon)
-        {
-            // lines are almost parallel
-            sc = 0.0f;
-            tc = (b > c ? d / b : e / c);
-        }
-        else
-        {
-            sc = (b * e - c * d) / D;
-            tc = (a * e - b * d) / D;
-        }
-
-        // Closest point on line1 to line2
-        Vector3 pointOnLine1 = line1_originCamera.transform.position + sc * u;
-        // Closest point on line2 to line1
-        Vector3 pointOnLine2 = line2_originCamera.transform.position + tc * v;
-
-        return (pointOnLine1, pointOnLine2);
     }
 }
