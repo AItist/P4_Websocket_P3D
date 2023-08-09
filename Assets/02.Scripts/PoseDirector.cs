@@ -13,6 +13,8 @@ public struct PoseContainer
     public Transform rig_centerSpine;
     public Transform cameraRoot;
     public Transform poseRoot;
+    public Transform rotSource;
+    public Transform rotTarget;
     public List<Transform> riggs_pose;
 }
 
@@ -21,6 +23,7 @@ public class PoseDirector : MonoBehaviour
     public List<PoseContainer> poseContainer;
 
     public Vector3 camera1_pos;
+    public bool debug;
 
     private float[] GetPoseScale(List<Transform> riggingPoints_)
     {
@@ -65,6 +68,8 @@ public class PoseDirector : MonoBehaviour
         Transform centerSpine = null;
         Transform camRoot = null;
         Transform poseRoot = null;
+        Transform rotSource = null;
+        Transform rotTarget = null;
         if (index == 0)
         {
             riggingPoints_ = poseContainer[0].riggs_pose;
@@ -72,6 +77,8 @@ public class PoseDirector : MonoBehaviour
             centerSpine = poseContainer[0].rig_centerSpine;
             camRoot = poseContainer[0].cameraRoot;
             poseRoot = poseContainer[0].poseRoot;
+            rotSource = poseContainer[0].rotSource;
+            rotTarget = poseContainer[0].rotTarget;
         }
         else if (index == 1)
         {
@@ -80,6 +87,8 @@ public class PoseDirector : MonoBehaviour
             centerSpine = poseContainer[1].rig_centerSpine;
             camRoot = poseContainer[1].cameraRoot;
             poseRoot = poseContainer[1].poseRoot;
+            rotSource = poseContainer[1].rotSource;
+            rotTarget = poseContainer[1].rotTarget;
         }
         else if (index == 2)
         {
@@ -88,6 +97,8 @@ public class PoseDirector : MonoBehaviour
             centerSpine = poseContainer[2].rig_centerSpine;
             camRoot = poseContainer[2].cameraRoot;
             poseRoot = poseContainer[2].poseRoot;
+            rotSource = poseContainer[2].rotSource;
+            rotTarget = poseContainer[2].rotTarget;
         }
         else if (index == 3)
         {
@@ -96,6 +107,8 @@ public class PoseDirector : MonoBehaviour
             centerSpine = poseContainer[3].rig_centerSpine;
             camRoot = poseContainer[3].cameraRoot;
             poseRoot = poseContainer[3].poseRoot;
+            rotSource = poseContainer[3].rotSource;
+            rotTarget = poseContainer[3].rotTarget;
         }
 
         // 현재 포즈값이 넘어오지 않은 상태라면 중단
@@ -107,14 +120,38 @@ public class PoseDirector : MonoBehaviour
 
         centerSpine.localScale = Vector3.one;
 
+        // 받은 값을 riggingPoints에 적용한다.
         for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
         {
             riggingPoints_[i].position = poses[i];
+        }
+
+        if (debug)
+        {
+            // 전체 회전값을 가져오고 적용한다.
+            Quaternion modelRotation = GetRotation(rotSource, riggingPoints_[11], riggingPoints_[12]);
+            //rotTarget.rotation = modelRotation;
+            Debug.Log(modelRotation.eulerAngles);
+            float rotY = modelRotation.eulerAngles.y;
+            rotTarget.rotation = Quaternion.Euler(new Vector3(0, rotY + 90, 0));
+            poseRoot.rotation = Quaternion.identity;
+            poseRoot.Rotate(new Vector3(0, rotY + 90, 0));
         }
 
         float[] diff = GetPoseScale(riggingPoints_);
         camRoot.position = centerSpine.position;
         centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
         poseRoot.position = camRoot.position;
+    }
+
+    public Vector3 tstVec;
+
+    public Quaternion GetRotation(Transform target, Transform lShoulder, Transform rShoulder)
+    {
+        target.position = (lShoulder.position + rShoulder.position) / 2;
+        target.LookAt(lShoulder);
+        target.Rotate(new Vector3(0+tstVec.x, 0+tstVec.y, 0+ tstVec.z));
+
+        return target.rotation;
     }
 }

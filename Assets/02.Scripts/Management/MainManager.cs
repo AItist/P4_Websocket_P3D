@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using static PaintIn3D.P3dWindow; 
 
@@ -92,12 +93,16 @@ namespace Management
 
         #endregion Start
 
-        #region Update
+        [Header("Test Parameters")]
         public int tstX;
         public int tstY;
         public int tstWidth;
         public int tstHeight;
         public Vector3 tstImgScale1;
+
+        public Vector2 customClickVector;
+        
+        #region Update
 
         private void Update()
         {
@@ -155,7 +160,7 @@ namespace Management
             imageData.stage2_AssignImgDics = true;
         }
 
-        public Vector2 customClickVector;
+        
 
         /// <summary>
         /// 주 관리자 Update에서 텍스처 업데이트시 실행할 이벤트
@@ -248,15 +253,51 @@ namespace Management
             ExportTextures();
         }
 
+        public SkinnedMeshRenderer testRenderer;
+
         /// <summary>
         /// 텍스처를 paintable 객체에서 추출해낸다.
         /// </summary>
         private void ExportTextures()
         {
+            //// p3dPaintDecal들을 가져온다.
+            //Texture2D[] textures = GetTextures();
+
+            //Texture2D texResult = MergeTextures(textures);
+
+            //testRenderer.material.SetTexture("_MainTex", texResult);
+
+            ////-----
+            //byte[] byteArray = texResult.EncodeToPNG();
+
+            //string encodeStr = EncodeToString(byteArray);
+
+            //SerializeAndSendServer(encodeStr);
+            ////-----
+
+
+            //-----
+            //P3dPaintableTexture[] p3dTextures = _paintable.GetComponents<P3dPaintableTexture>();
+
+            //// 각각의 p3d 텍스처에서 byte[] 이미지 배열을 뽑아낸다.
+            //List<byte[]> textureData = GetTextureByteDatas(p3dTextures);
+
+            //// 모은 텍스처들을 하나의 텍스처로 &연산 한다.
+            //byte[] textureResult = IntersectByteDatas(textureData);
+
+            //string encodeStr = EncodeToString(textureResult);
+
+            ////Debug.Log("1");
+            //SerializeAndSendServer(encodeStr);
+            //-----
+
+
+
             //_mats = _paintable.Materials;
             // 여기서 단일 paintable 기준으로 텍스처를 가져온다.
             _texture = _paintable.GetComponents<P3dPaintableTexture>();
 
+            boo();
             // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
             string result = GetEncodedTexture(_texture);
             //Dictionary<string, string> result = GetEncodedTexture(_texture);
@@ -264,6 +305,100 @@ namespace Management
             // 2: string 데이터 직렬화 및 서버 전달
             SerializeAndSendServer(result);
         }
+
+        public void boo()
+        {
+
+        }
+
+        private Texture2D[] GetTextures()
+        {
+            List<Texture2D> _p3dTextures = new List<Texture2D>();
+            foreach(DecalContainer cont in decalContainer)
+            {
+                //Texture2D tex = cont.texture.Texture as Texture2D; // TODO: 일단 Texture 자체가 없음..
+
+                Texture2D tex = cont.texture.GetReadableCopy(false);
+
+                _p3dTextures.Add(tex);
+            }
+            return _p3dTextures.ToArray();
+        }
+
+        private Texture2D MergeTextures(Texture2D[] textures)
+        {
+            int width = textures[0].width;
+            int height = textures[0].height;
+
+            Texture2D result = new Texture2D(width, height);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Color mergedColor = new Color(1, 1, 1, 1);
+                    foreach (Texture2D texture in textures)
+                    {
+                        Color pixelColor = texture.GetPixel(x, y);
+                        mergedColor.r *= pixelColor.r;
+                        mergedColor.g *= pixelColor.g;
+                        mergedColor.b *= pixelColor.b;
+                        mergedColor.a *= pixelColor.a;
+                    }
+                    result.SetPixel(x, y, mergedColor);
+                }
+            }
+
+            result.Apply();
+            return result;
+        }
+
+        #region Attempt 1
+        private List<byte[]> GetTextureByteDatas(P3dPaintableTexture[] textures)
+        {
+            List<byte[]> data = new List<byte[]>();
+            foreach(P3dPaintableTexture tex in textures)
+            {
+                byte[] ba = GetPaintableTexture(tex);
+                data.Add(ba);
+            }
+            return data;
+        }
+
+        private byte[] IntersectByteDatas(List<byte[]> data)
+        {
+            if (data == null || data.Count < 4)
+            {
+                throw new ArgumentException("Data list should contain at least 4 byte arrays.");
+            }
+
+            int count = data[0].Length;
+            byte[] result = new byte[count];
+            //Debug.Log(data[0].Length);
+            //Debug.Log(data[1].Length);
+            //Debug.Log(data[2].Length);
+            //Debug.Log(data[3].Length);
+            //Debug.Log(result.Length);
+
+            for (int i = 0; i < count; i++)
+            {
+                int b1 = (i < data[0].Length) ? data[0][i] : 255;
+                int b2 = (i < data[1].Length) ? data[1][i] : 255;
+                int b3 = (i < data[2].Length) ? data[2][i] : 255;
+                int b4 = (i < data[3].Length) ? data[3][i] : 255;
+                result[i] = (byte)(b1 & b2 & b3 & b4);
+            }
+
+            return result;
+        }
+
+        private string EncodeToString(byte[] byteArray)
+        {
+            string encodeStr = encodeString(byteArray);
+
+            return encodeStr;
+        }
+        #endregion
 
         #region 1: Paintable 내부에 있는 모든 textures 문자열 인코딩 후 dict로 반환
 
@@ -351,10 +486,12 @@ namespace Management
         private void SerializeAndSendServer(string str)
         {
             //Debug.Log(str);
-            string json = Newtonsoft.Json.JsonConvert.SerializeObject(str);
             //Debug.Log(json);
 
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(str);
             websocket.Send_Message(json);
+
+            //websocket.Send_Message(str);
         }
 
         #endregion

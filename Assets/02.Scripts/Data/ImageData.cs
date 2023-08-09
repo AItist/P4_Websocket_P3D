@@ -363,7 +363,7 @@ namespace Data
             {
                 int offsetX = (int)(pCenter0[0] * imgWidth);
                 int offsetY = (int)(pCenter0[1] * imgHeight);
-                Img1_Texture = TranslateTexture(Img1_Texture, offsetX, offsetY + tstY);
+                Img1_Texture = TranslateTexture(Img1_Texture, offsetX + tstX, offsetY + tstY);
                 //Img1_Texture = ResizeTexture(Img1_Texture, tstWidth, tstHeight);
             }
 
@@ -371,21 +371,21 @@ namespace Data
             {
                 int offsetX = (int)(pCenter1[0] * imgWidth);
                 int offsetY = (int)(pCenter1[1] * imgHeight);
-                Img2_Texture = TranslateTexture(Img2_Texture, offsetX, offsetY);
+                Img2_Texture = TranslateTexture(Img2_Texture, offsetX + tstX, offsetY + tstY);
             }
 
             if (Img3_decoded != null)
             {
                 int offsetX = (int)(pCenter2[0] * imgWidth);
                 int offsetY = (int)(pCenter2[1] * imgHeight);
-                Img3_Texture = TranslateTexture(Img3_Texture, offsetX, offsetY);
-            }
+                Img3_Texture = TranslateTexture(Img3_Texture, offsetX + tstX, offsetY + tstY);
+            } 
 
             if (Img4_decoded != null)
             {
                 int offsetX = (int)(pCenter3[0] * imgWidth);
                 int offsetY = (int)(pCenter3[1] * imgHeight);
-                Img4_Texture = TranslateTexture(Img4_Texture, offsetX, offsetY);
+                Img4_Texture = TranslateTexture(Img4_Texture, offsetX + tstX, offsetY + tstY);
             }
         }
 
