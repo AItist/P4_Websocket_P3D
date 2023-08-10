@@ -311,8 +311,13 @@ namespace Management
             string result4 = GetEncodedTexture(texture4);
             //Dictionary<string, string> result = GetEncodedTexture(_texture);
 
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("width", "640"); result.Add("height", "480");
+            result.Add("0", result1); result.Add("1", result2) ; result.Add("2", result3); result.Add("3", result4);
+
             // 2: string 데이터 직렬화 및 서버 전달
-            SerializeAndSendServer(result1);
+            //SerializeAndSendServer(result1);    // test
+            SerializeAndSendServer(result);
         }
 
         public void boo()
