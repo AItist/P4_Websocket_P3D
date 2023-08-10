@@ -2073,21 +2073,25 @@ MonoBehaviour:
   websocket: {fileID: 139851384}
   decalContainer:
   - paintDecal: {fileID: 2008047256}
+    paintable: {fileID: 2123505073}
     texture: {fileID: 2123505071}
     originCamera: {fileID: 934811708}
     camRoot: {fileID: 777755898}
     camAngle: {x: 0, y: 0, z: 0, w: 0}
   - paintDecal: {fileID: 1310569571}
+    paintable: {fileID: 435381530}
     texture: {fileID: 435381528}
     originCamera: {fileID: 747211192}
     camRoot: {fileID: 1011453583}
     camAngle: {x: 0, y: 0, z: 0, w: 0}
   - paintDecal: {fileID: 834391868}
+    paintable: {fileID: 658007829}
     texture: {fileID: 658007827}
     originCamera: {fileID: 1450660206}
     camRoot: {fileID: 1461557241}
     camAngle: {x: 0, y: 0, z: 0, w: 0}
   - paintDecal: {fileID: 1291936686}
+    paintable: {fileID: 837733}
     texture: {fileID: 837731}
     originCamera: {fileID: 2014301292}
     camRoot: {fileID: 1895671231}
@@ -2314,7 +2318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59cdfd3735537324b88a458c37e42547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _serverUrl: ws://localhost:8081
+  _serverUrl: ws://localhost:8072
 --- !u!1001 &143290159
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26082,7 +26086,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2022243396
 Transform:
   m_ObjectHideFlags: 0
@@ -26091,7 +26095,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2022243395}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.18, y: 0, z: 0}
+  m_LocalPosition: {x: -2.18, y: 0, z: 2.09}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
