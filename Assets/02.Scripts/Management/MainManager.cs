@@ -295,14 +295,28 @@ namespace Management
 
             //_mats = _paintable.Materials;
             // 여기서 단일 paintable 기준으로 텍스처를 가져온다.
-            _texture = _paintable.GetComponents<P3dPaintableTexture>();
+            //_texture = _paintable.GetComponents<P3dPaintableTexture>();
+            P3dPaintableTexture[] texture1 = decalContainer[0].paintable.GetComponents<P3dPaintableTexture>();
+            P3dPaintableTexture[] texture2 = decalContainer[1].paintable.GetComponents<P3dPaintableTexture>();
+            P3dPaintableTexture[] texture3 = decalContainer[2].paintable.GetComponents<P3dPaintableTexture>();
+            P3dPaintableTexture[] texture4 = decalContainer[3].paintable.GetComponents<P3dPaintableTexture>();
+            //_texture = new P3dPaintableTexture[1];
+            //_texture[0] = decalContainer[0].texture;
 
             boo();
             // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
-            string result = GetEncodedTexture(_texture);
+            string result1 = GetEncodedTexture(texture1);
+            string result2 = GetEncodedTexture(texture2);
+            string result3 = GetEncodedTexture(texture3);
+            string result4 = GetEncodedTexture(texture4);
             //Dictionary<string, string> result = GetEncodedTexture(_texture);
 
+            Dictionary<string, string> result = new Dictionary<string, string>();
+            result.Add("width", "640"); result.Add("height", "480");
+            result.Add("0", result1); result.Add("1", result2) ; result.Add("2", result3); result.Add("3", result4);
+
             // 2: string 데이터 직렬화 및 서버 전달
+            //SerializeAndSendServer(result1);    // test
             SerializeAndSendServer(result);
         }
 
