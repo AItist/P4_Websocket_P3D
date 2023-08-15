@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 using static PaintIn3D.P3dWindow; 
@@ -247,6 +248,7 @@ namespace Management
 
         private void LateUpdate()
         {
+            //return;
             if (!isDecal_updated) { return; }
             IsDecal_updated = false;
 
@@ -258,7 +260,7 @@ namespace Management
         /// <summary>
         /// 텍스처를 paintable 객체에서 추출해낸다.
         /// </summary>
-        private void ExportTextures()
+        private async void ExportTextures()
         {
             //// p3dPaintDecal들을 가져온다.
             //Texture2D[] textures = GetTextures();
@@ -303,13 +305,20 @@ namespace Management
             //_texture = new P3dPaintableTexture[1];
             //_texture[0] = decalContainer[0].texture;
 
-            boo();
             // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
-            string result1 = GetEncodedTexture(texture1);
-            string result2 = GetEncodedTexture(texture2);
-            string result3 = GetEncodedTexture(texture3);
-            string result4 = GetEncodedTexture(texture4);
+            var task1 = GetEncodedTextureAsync(texture1);
+            var task2 = GetEncodedTextureAsync(texture2);
+            var task3 = GetEncodedTextureAsync(texture3);
+            var task4 = GetEncodedTextureAsync(texture4);
+
+            await Task.WhenAll(task1, task2, task3, task4);
+
+            string result1 = task1.Result;
+            string result2 = task2.Result;
+            string result3 = task3.Result;
+            string result4 = task4.Result;
             //Dictionary<string, string> result = GetEncodedTexture(_texture);
+            //return;
 
             Dictionary<string, string> result = new Dictionary<string, string>();
             result.Add("width", "640"); result.Add("height", "480");
@@ -317,12 +326,8 @@ namespace Management
 
             // 2: string 데이터 직렬화 및 서버 전달
             //SerializeAndSendServer(result1);    // test
+
             SerializeAndSendServer(result);
-        }
-
-        public void boo()
-        {
-
         }
 
         private Texture2D[] GetTextures()
@@ -442,6 +447,31 @@ namespace Management
             }
 
             return result;
+        }
+
+        private async Task<string> GetEncodedTextureAsync(P3dPaintableTexture[] paintableTextures)
+        {
+            return await Task.Run(() => {
+                //Dictionary<string, string> dict = new Dictionary<string, string>();
+                string result = "";
+
+                int i = 0; // _paintable.materials[0]
+                int j = 0; // _paintable.GetComponents<P3ddPaintableTexture>()[0];
+
+                // materials i 와 매칭되는 j만 연산 실행
+                // 기존 materials 같이 갖고왔는데 최종 모델은 무조건 mat 1 tex 1로 정해져 있음.
+                // i == 0 : 아래 조건식의 0은 원래 같이 갖고온 materials 배열의 인덱스 0(1번째)임.
+                // j == 0 : 첫 번째 P3dTexture
+                if (paintableTextures[j].Slot.Index == i)
+                {
+                    byte[] byteArray = GetPaintableTexture(paintableTextures[j]);
+                    string encodeStr = encodeString(byteArray);
+
+                    result = encodeStr;
+                }
+
+                return result;
+            });
         }
 
         /// <summary>
