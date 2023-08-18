@@ -107,6 +107,35 @@ namespace Management
 
         private void Update()
         {
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                Debug.Log("1");
+                Transform cam = decalContainer[1].originCamera.transform;
+                Vector3 cur = cam.localPosition;
+                cam.localPosition = new Vector3(cur.x, cur.y + 0.1f, cur.z);
+            }
+
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                Transform cam = decalContainer[1].originCamera.transform;
+                Vector3 cur = cam.localPosition;
+                cam.localPosition = new Vector3(cur.x, cur.y - 0.1f, cur.z);
+            }
+
+            if (Input.GetKeyDown(KeyCode.LeftArrow))
+            {
+                Transform cam = decalContainer[1].originCamera.transform;
+                Vector3 cur = cam.localPosition;
+                cam.localPosition = new Vector3(cur.x - 0.1f, cur.y, cur.z);
+            }
+
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+            {
+                Transform cam = decalContainer[1].originCamera.transform;
+                Vector3 cur = cam.localPosition;
+                cam.localPosition = new Vector3(cur.x + 0.1f, cur.y, cur.z);
+            }
+
             if (ImgQueue.Count == 0) { return; }
 
             Data.ImageData iData = ImgQueue.Dequeue();
@@ -114,7 +143,7 @@ namespace Management
             iData.Unity_SetTexture(tstX, tstY, tstWidth, tstHeight);
             // -----
 
-            decalContainer[0].paintDecal.Scale = tstImgScale1;
+            //decalContainer[0].paintDecal.Scale = tstImgScale1;
 
             // -----
             iData.stage3_SetTexture = true;
@@ -130,6 +159,9 @@ namespace Management
             }
 
             ImgQueue.Clear();
+
+            
+            //return;
         }
 
         /// <summary>
@@ -451,24 +483,29 @@ namespace Management
 
         private async Task<string> GetEncodedTextureAsync(P3dPaintableTexture[] paintableTextures)
         {
+            int i = 0; // _paintable.materials[0]
+            int j = 0; // _paintable.GetComponents<P3ddPaintableTexture>()[0];
+
+            byte[] byteArray = GetPaintableTexture(paintableTextures[0]);
+
             return await Task.Run(() => {
                 //Dictionary<string, string> dict = new Dictionary<string, string>();
                 string result = "";
-
-                int i = 0; // _paintable.materials[0]
-                int j = 0; // _paintable.GetComponents<P3ddPaintableTexture>()[0];
 
                 // materials i 와 매칭되는 j만 연산 실행
                 // 기존 materials 같이 갖고왔는데 최종 모델은 무조건 mat 1 tex 1로 정해져 있음.
                 // i == 0 : 아래 조건식의 0은 원래 같이 갖고온 materials 배열의 인덱스 0(1번째)임.
                 // j == 0 : 첫 번째 P3dTexture
-                if (paintableTextures[j].Slot.Index == i)
-                {
-                    byte[] byteArray = GetPaintableTexture(paintableTextures[j]);
-                    string encodeStr = encodeString(byteArray);
+                string encodeStr = encodeString(byteArray);
 
-                    result = encodeStr;
-                }
+                result = encodeStr;
+                //if (paintableTextures[j].Slot.Index == i)
+                //{
+                //    //byte[] byteArray = GetPaintableTexture(paintableTextures[j]);
+                //    string encodeStr = encodeString(byteArray);
+
+                //    result = encodeStr;
+                //}
 
                 return result;
             });

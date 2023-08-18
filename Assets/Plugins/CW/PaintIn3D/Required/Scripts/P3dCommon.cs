@@ -320,13 +320,17 @@ namespace PaintIn3D
 			{
 				if (width <= 0)
 				{
-					width = texture.width;
-				}
+					// TODO : TT
+					width = 640;
+                    //width = texture.width;
+                }
 
 				if (height <= 0)
 				{
-					height = texture.height;
-				}
+					// TODO : TT
+					height = 480;
+                    //height = texture.height;
+                }
 
 				if (CanReadPixels(format) == true)
 				{

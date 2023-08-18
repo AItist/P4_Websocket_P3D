@@ -7,6 +7,8 @@ using WebSocketSharp;
 using UnityEngine;
 using System.Runtime.Serialization.Formatters.Binary;
 using Environment;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 namespace Data
 {
@@ -351,13 +353,23 @@ namespace Data
 
         // =====
 
-        public void Unity_SetTexture(int tstX, int tstY, int tstWidth, int tstHeight)
+        public async void Unity_SetTexture(int tstX, int tstY, int tstWidth, int tstHeight)
         {
+            //var task1 = Unity_CreateTexture2DAsync(Img1_decoded, imgWidth, imgHeight, imgDepth);
+            //var task2 = Unity_CreateTexture2DAsync(Img2_decoded, imgWidth, imgHeight, imgDepth);
+            //var task3 = Unity_CreateTexture2DAsync(Img3_decoded, imgWidth, imgHeight, imgDepth);
+            //var task4 = Unity_CreateTexture2DAsync(Img4_decoded, imgWidth, imgHeight, imgDepth);
+
+            //await Task.WhenAll(task1, task2, task3, task4);
+
+            //Img1_Texture = task1.Result;
+            //Img2_Texture = task2.Result;
+            //Img3_Texture = task3.Result;
+            //Img4_Texture = task4.Result;
             Img1_Texture = Unity_CreateTexture2D(Img1_decoded, imgWidth, imgHeight, imgDepth);
             Img2_Texture = Unity_CreateTexture2D(Img2_decoded, imgWidth, imgHeight, imgDepth);
             Img3_Texture = Unity_CreateTexture2D(Img3_decoded, imgWidth, imgHeight, imgDepth);
             Img4_Texture = Unity_CreateTexture2D(Img4_decoded, imgWidth, imgHeight, imgDepth);
-            //Frame_Texture = Unity_CreateTexture2D(imgWidth, imgHeight, imgDepth);
 
             if (Img1_decoded != null)
             {
@@ -449,43 +461,6 @@ namespace Data
             return result;
         }
 
-        //public Texture2D CompressTexture(Texture2D source)
-        //{
-        //    int width = source.width;
-        //    int height = source.height;
-
-        //    Texture2D result = new Texture2D(width, height);
-
-        //    float centerX = 0.5f;
-        //    float centerY = 0.5f;
-
-        //    // Copy the pixels to the result texture
-        //    for (int y = 0; y < height; y++)
-        //    {
-        //        for (int x = 0; x < width; x++)
-        //        {
-        //            // Calculate the normalized coordinates
-        //            float u = (float)x / (width - 1);
-        //            float v = (float)y / (height - 1);
-
-        //            // Calculate the new coordinates
-        //            float newU = centerX + (u - centerX) / Mathf.Abs(u - centerX);
-        //            float newV = centerY + (v - centerY) / Mathf.Abs(v - centerY);
-
-        //            // Get the pixel value at the new coordinates
-        //            Color color = source.GetPixelBilinear(newU, newV);
-
-        //            // Set the pixel value
-        //            result.SetPixel(x, y, color);
-        //        }
-        //    }
-
-        //    // Apply the changes to the result texture
-        //    result.Apply();
-
-        //    return result;
-        //}
-
         public bool IsTextureExisted()
         {
             for (int i = 0; i < cam_count; i++)
@@ -530,21 +505,24 @@ namespace Data
             return recoveredTexture;
         }
 
-        //Texture2D Unity_CreateTexture2D(byte[,,] frame_decoded, int tWidth, int tHeight, int tDepth)
-        //{
-        //    if (frame_decoded == null) { return null; }
+        private async Task<Texture2D> Unity_CreateTexture2DAsync(byte[] frame_decoded, int tWidth, int tHeight, int tDepth)
+        {
+            if (frame_decoded == null) { return null; }
 
-        //    //int tWidth = 640;
-        //    //int tHeight = 480;
-        //    //int tDepth = 3;
+            var completionSource = new System.Threading.Tasks.TaskCompletionSource<Texture2D>();
 
-        //    // Step 3: Create a new Texture2D and load the decompressed data
-        //    Texture2D recoveredTexture = new Texture2D(tWidth, tHeight, TextureFormat.RGB24, false);
-        //    recoveredTexture.LoadRawTextureData(frame_decoded);
-        //    recoveredTexture.Apply();
+            MainThreadDispatcher.Enqueue(() =>
+            {
+                Texture2D recoveredTexture = new Texture2D(tWidth, tHeight, TextureFormat.RGB24, false);
+                recoveredTexture.LoadRawTextureData(frame_decoded);
+                recoveredTexture.Apply();
 
-        //    return recoveredTexture;
-        //}
+                completionSource.SetResult(recoveredTexture);
+            });
+
+            return await completionSource.Task;
+        }
+
 
         public Texture2D CopyTexture(int index)
         {
