@@ -36,7 +36,15 @@ namespace PaintIn3D
 		public P3dBlendMode BlendMode { set { blendMode = value; } get { return blendMode; } } [SerializeField] private P3dBlendMode blendMode = P3dBlendMode.AlphaBlend(Vector4.one);
 
 		/// <summary>The decal that will be painted.</summary>
-		public Texture Texture { set { texture = value; } get { return texture; } } [SerializeField] private Texture texture;
+		public Texture Texture 
+		{ 
+			set 
+			{
+				Destroy(texture);
+				texture = value; 
+			} 
+			get { return texture; } 
+		} [SerializeField] private Texture texture;
 
 		/// <summary>This allows you to specify the shape of the decal. This is optional for most blending modes, because they usually derive their shape from the RGB or A values. However, if you're using the <b>Replace</b> blending mode, then you must manually specify the shape.</summary>
 		public Texture Shape { set { shape = value; } get { return shape; } } [SerializeField] private Texture shape;

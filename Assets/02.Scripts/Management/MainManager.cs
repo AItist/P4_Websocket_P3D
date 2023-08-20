@@ -172,6 +172,48 @@ namespace Management
             // FIX : 이미지 텍스처 생성까지 관리자 Update에서 작성함 다음 단계 진행
             Update_Websocket_pose_texture2D();
 
+            //// 작업 후 이미지 리스트 클리어
+            //TextureInImgList.Clear();
+            UnloadAllImgData();
+        }
+
+        public void UnloadAllImgData()
+        {
+            foreach(ImageData data in TextureInImgList)
+            {
+                if (data == null) { continue; }
+
+                if (data.Frame_Texture != null)
+                {
+                    Destroy(data.Frame_Texture);
+                    data.Frame_Texture = null;
+                }
+
+                if (data.Img1_Texture != null)
+                {
+                    Destroy(data.Img1_Texture);
+                    data.Img1_Texture = null;
+                }
+
+                if (data.Img2_Texture != null)
+                {
+                    Destroy(data.Img2_Texture);
+                    data.Img2_Texture = null;
+                }
+
+                if (data.Img3_Texture != null)
+                {
+                    Destroy(data.Img3_Texture);
+                    data.Img3_Texture = null;
+                }
+
+                if (data.Img4_Texture != null)
+                {
+                    Destroy(data.Img4_Texture);
+                    data.Img4_Texture = null;
+                }
+            }
+
             // 작업 후 이미지 리스트 클리어
             TextureInImgList.Clear();
         }
@@ -215,26 +257,38 @@ namespace Management
             
             if (iData.Img1_Texture != null)
             {
+                Texture old = decalContainer[0].paintDecal.Texture;
                 decalContainer[0].paintDecal.IsClick = true;
                 decalContainer[0].paintDecal.Texture = iData.CopyTexture(0);
+                //decalContainer[0].paintDecal.Texture = iData.Img1_Texture;
+                Destroy(old);
             }
 
             if (iData.Img2_Texture != null)
             {
+                Texture old = decalContainer[1].paintDecal.Texture;
                 decalContainer[1].paintDecal.IsClick = true;
                 decalContainer[1].paintDecal.Texture = iData.CopyTexture(1);
+                //decalContainer[1].paintDecal.Texture = iData.Img2_Texture;
+                Destroy(old);
             }
 
             if (iData.Img3_Texture != null)
             {
+                Texture old = decalContainer[2].paintDecal.Texture;
                 decalContainer[2].paintDecal.IsClick = true;
                 decalContainer[2].paintDecal.Texture = iData.CopyTexture(2);
+                //decalContainer[2].paintDecal.Texture = iData.Img3_Texture;
+                Destroy(old);
             }
 
             if (iData.Img4_Texture != null)
             {
+                Texture old = decalContainer[3].paintDecal.Texture;
                 decalContainer[3].paintDecal.IsClick = true;
                 decalContainer[3].paintDecal.Texture = iData.CopyTexture(3);
+                //decalContainer[3].paintDecal.Texture = iData.Img4_Texture;
+                Destroy(old);
             }
 
             // 입력 이벤트 발생 준비
@@ -487,6 +541,9 @@ namespace Management
             int j = 0; // _paintable.GetComponents<P3ddPaintableTexture>()[0];
 
             byte[] byteArray = GetPaintableTexture(paintableTextures[0]);
+
+            //Destroy(paintableTextures[0]);
+            //paintableTextures[0] = null;
 
             return await Task.Run(() => {
                 //Dictionary<string, string> dict = new Dictionary<string, string>();

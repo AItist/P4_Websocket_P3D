@@ -353,7 +353,7 @@ namespace Data
 
         // =====
 
-        public async void Unity_SetTexture(int tstX, int tstY, int tstWidth, int tstHeight)
+        public void Unity_SetTexture(int tstX, int tstY, int tstWidth, int tstHeight)
         {
             //var task1 = Unity_CreateTexture2DAsync(Img1_decoded, imgWidth, imgHeight, imgDepth);
             //var task2 = Unity_CreateTexture2DAsync(Img2_decoded, imgWidth, imgHeight, imgDepth);
@@ -366,39 +366,50 @@ namespace Data
             //Img2_Texture = task2.Result;
             //Img3_Texture = task3.Result;
             //Img4_Texture = task4.Result;
+
+
             Img1_Texture = Unity_CreateTexture2D(Img1_decoded, imgWidth, imgHeight, imgDepth);
             Img2_Texture = Unity_CreateTexture2D(Img2_decoded, imgWidth, imgHeight, imgDepth);
             Img3_Texture = Unity_CreateTexture2D(Img3_decoded, imgWidth, imgHeight, imgDepth);
             Img4_Texture = Unity_CreateTexture2D(Img4_decoded, imgWidth, imgHeight, imgDepth);
 
-            if (Img1_decoded != null)
-            {
-                int offsetX = (int)(pCenter0[0] * imgWidth);
-                int offsetY = (int)(pCenter0[1] * imgHeight);
-                Img1_Texture = TranslateTexture(Img1_Texture, offsetX + tstX, offsetY + tstY);
-                //Img1_Texture = ResizeTexture(Img1_Texture, tstWidth, tstHeight);
-            }
+            //if (Img1_decoded != null)
+            //{
+            //    int offsetX = (int)(pCenter0[0] * imgWidth);
+            //    int offsetY = (int)(pCenter0[1] * imgHeight);
+            //    Img1_Texture = TranslateTexture(Unity_CreateTexture2D(Img1_decoded, imgWidth, imgHeight, imgDepth)
+            //        , offsetX + tstX, offsetY + tstY);
+                
+            //    //Img1_Texture = TranslateTexture(Img1_Texture, offsetX + tstX, offsetY + tstY);
+            //    //Img1_Texture = ResizeTexture(Img1_Texture, tstWidth, tstHeight);
+            //}
 
-            if (Img2_decoded != null)
-            {
-                int offsetX = (int)(pCenter1[0] * imgWidth);
-                int offsetY = (int)(pCenter1[1] * imgHeight);
-                Img2_Texture = TranslateTexture(Img2_Texture, offsetX + tstX, offsetY + tstY);
-            }
+            //if (Img2_decoded != null)
+            //{
+            //    int offsetX = (int)(pCenter1[0] * imgWidth);
+            //    int offsetY = (int)(pCenter1[1] * imgHeight);
+            //    Img2_Texture = TranslateTexture(Unity_CreateTexture2D(Img2_decoded, imgWidth, imgHeight, imgDepth)
+            //        , offsetX + tstX, offsetY + tstY);
+            //    //Img2_Texture = TranslateTexture(Img2_Texture, offsetX + tstX, offsetY + tstY);
+            //}
 
-            if (Img3_decoded != null)
-            {
-                int offsetX = (int)(pCenter2[0] * imgWidth);
-                int offsetY = (int)(pCenter2[1] * imgHeight);
-                Img3_Texture = TranslateTexture(Img3_Texture, offsetX + tstX, offsetY + tstY);
-            } 
+            //if (Img3_decoded != null)
+            //{
+            //    int offsetX = (int)(pCenter2[0] * imgWidth);
+            //    int offsetY = (int)(pCenter2[1] * imgHeight);
+            //    Img3_Texture = TranslateTexture(Unity_CreateTexture2D(Img3_decoded, imgWidth, imgHeight, imgDepth)
+            //        , offsetX + tstX, offsetY + tstY);
+            //    //Img3_Texture = TranslateTexture(Img3_Texture, offsetX + tstX, offsetY + tstY);
+            //}
 
-            if (Img4_decoded != null)
-            {
-                int offsetX = (int)(pCenter3[0] * imgWidth);
-                int offsetY = (int)(pCenter3[1] * imgHeight);
-                Img4_Texture = TranslateTexture(Img4_Texture, offsetX + tstX, offsetY + tstY);
-            }
+            //if (Img4_decoded != null)
+            //{
+            //    int offsetX = (int)(pCenter3[0] * imgWidth);
+            //    int offsetY = (int)(pCenter3[1] * imgHeight);
+            //    Img4_Texture = TranslateTexture(Unity_CreateTexture2D(Img4_decoded, imgWidth, imgHeight, imgDepth)
+            //        , offsetX + tstX, offsetY + tstY);
+            //    //Img4_Texture = TranslateTexture(Img4_Texture, offsetX + tstX, offsetY + tstY);
+            //}
         }
 
         public Texture2D TranslateTexture(Texture2D source, int offsetX, int offsetY)
@@ -428,7 +439,7 @@ namespace Data
             }
 
             // Apply the changes to the result texture
-            result.Apply();
+            //result.Apply();
 
             return result;
         }
@@ -500,7 +511,7 @@ namespace Data
             // Step 3: Create a new Texture2D and load the decompressed data
             Texture2D recoveredTexture = new Texture2D(tWidth, tHeight, TextureFormat.RGB24, false);
             recoveredTexture.LoadRawTextureData(frame_decoded);
-            recoveredTexture.Apply();
+            //recoveredTexture.Apply();
 
             return recoveredTexture;
         }
