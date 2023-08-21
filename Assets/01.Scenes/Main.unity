@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 837733}
   - component: {fileID: 837732}
   - component: {fileID: 837731}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Y Bot attach all O4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2332,6 +2332,16 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 1450660206}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: debug
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: layers.m_Bits
+      value: 4097
+      objectReference: {fileID: 0}
     - target: {fileID: 1280862563071204563, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
       propertyPath: m_RootOrder
@@ -2704,6 +2714,16 @@ PrefabInstance:
       propertyPath: _camera
       value: 
       objectReference: {fileID: 2014301292}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: debug
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: layers.m_Bits
+      value: 8193
+      objectReference: {fileID: 0}
     - target: {fileID: 1280862563071204563, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
       propertyPath: m_RootOrder
@@ -6099,7 +6119,7 @@ GameObject:
   - component: {fileID: 435381530}
   - component: {fileID: 435381529}
   - component: {fileID: 435381528}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Y Bot attach all O2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8936,7 +8956,7 @@ GameObject:
   - component: {fileID: 658007829}
   - component: {fileID: 658007828}
   - component: {fileID: 658007827}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Y Bot attach all O3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16213,7 +16233,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1213738640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18100,6 +18120,11 @@ PrefabInstance:
         type: 3}
       propertyPath: scale.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: layers.m_Bits
+      value: 2049
       objectReference: {fileID: 0}
     - target: {fileID: 1280862563071204563, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
@@ -22725,7 +22750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1717922093
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -24214,7 +24239,7 @@ PrefabInstance:
     - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
       propertyPath: debug
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
@@ -24230,6 +24255,11 @@ PrefabInstance:
         type: 3}
       propertyPath: scale.y
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1280862563071204561, guid: 3a9e9edee89609442b3396a5aa5b388b,
+        type: 3}
+      propertyPath: layers.m_Bits
+      value: 1025
       objectReference: {fileID: 0}
     - target: {fileID: 1280862563071204563, guid: 3a9e9edee89609442b3396a5aa5b388b,
         type: 3}
@@ -27646,7 +27676,7 @@ GameObject:
   - component: {fileID: 2123505073}
   - component: {fileID: 2123505072}
   - component: {fileID: 2123505071}
-  m_Layer: 6
+  m_Layer: 10
   m_Name: Y Bot attach all O1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

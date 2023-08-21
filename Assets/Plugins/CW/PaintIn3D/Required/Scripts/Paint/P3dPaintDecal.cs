@@ -142,6 +142,17 @@ namespace PaintIn3D
 			hardness *= multiplier;
 		}
 
+		public bool Swit
+		{
+			get { return swit; }
+			set
+			{
+				swit = !swit;
+			}
+		}
+		private bool swit;
+		private int tstCount = 0;
+
 		/// <summary>This method paints all pixels at the specified point using the shape of a decal.</summary>
 		public void HandleHitPoint(bool preview, int priority, float pressure, int seed, Vector3 position, Quaternion rotation)
 		{
@@ -176,19 +187,32 @@ namespace PaintIn3D
 				CwHelper.EndSeed();
 			}
 
-			// pressure 1, preview true
-			// pressure 1, preview false
+            // pressure 1, preview true
+            // pressure 1, preview false
+				P3dCommandDecal.Instance.SetState(preview, priority);
+				P3dCommandDecal.Instance.SetLocation(position);
+				var worldSize     = HandleHitCommon(preview, pressure, seed, rotation);
+				var worldRadius   = P3dCommon.GetRadius(worldSize);
+				var worldPosition = position;
+				HandleMaskCommon(worldPosition);
+   //         if (swit)
+			//{
+			//	P3dCommandDecal.Instance.SetState(preview, priority);
+			//	P3dCommandDecal.Instance.SetLocation(position);
 
-			P3dCommandDecal.Instance.SetState(preview, priority);
-			P3dCommandDecal.Instance.SetLocation(position);
 
-			var worldSize     = HandleHitCommon(preview, pressure, seed, rotation);
-			var worldRadius   = P3dCommon.GetRadius(worldSize);
-			var worldPosition = position;
+			//	// ---
 
-			HandleMaskCommon(worldPosition);
+			//	HandleMaskCommon(worldPosition);
+			//	if (tstCount > 0)
+			//	{
+			//		swit = false;
+			//		tstCount = 0;
+			//	}
+			//	tstCount++;
+			//}
 
-			P3dPaintableManager.SubmitAll(P3dCommandDecal.Instance, worldPosition, worldRadius, layers, group, targetModel, targetTexture);
+				P3dPaintableManager.SubmitAll(P3dCommandDecal.Instance, worldPosition, worldRadius, layers, group, targetModel, targetTexture);
 		}
 
 		/// <summary>This method paints all pixels between the two specified points using the shape of a decal.</summary>

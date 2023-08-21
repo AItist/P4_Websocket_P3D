@@ -136,6 +136,17 @@ namespace Management
                 cam.localPosition = new Vector3(cur.x + 0.1f, cur.y, cur.z);
             }
 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Debug.Log("Clear");
+                //decalContainer[1].paintDecal.Swit = true;
+                foreach(var pTexture in decalContainer[1].paintable.PaintableTextures)
+                {
+                    pTexture.Clear();
+                }
+
+            }
+
             if (ImgQueue.Count == 0) { return; }
 
             Data.ImageData iData = ImgQueue.Dequeue();
