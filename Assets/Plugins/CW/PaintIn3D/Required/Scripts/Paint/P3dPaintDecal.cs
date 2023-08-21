@@ -189,30 +189,14 @@ namespace PaintIn3D
 
             // pressure 1, preview true
             // pressure 1, preview false
-				P3dCommandDecal.Instance.SetState(preview, priority);
-				P3dCommandDecal.Instance.SetLocation(position);
-				var worldSize     = HandleHitCommon(preview, pressure, seed, rotation);
-				var worldRadius   = P3dCommon.GetRadius(worldSize);
-				var worldPosition = position;
-				HandleMaskCommon(worldPosition);
-   //         if (swit)
-			//{
-			//	P3dCommandDecal.Instance.SetState(preview, priority);
-			//	P3dCommandDecal.Instance.SetLocation(position);
+			P3dCommandDecal.Instance.SetState(preview, priority);
+			P3dCommandDecal.Instance.SetLocation(position);
+			var worldSize     = HandleHitCommon(preview, pressure, seed, rotation);
+			var worldRadius   = P3dCommon.GetRadius(worldSize);
+			var worldPosition = position;
+			HandleMaskCommon(worldPosition);
 
-
-			//	// ---
-
-			//	HandleMaskCommon(worldPosition);
-			//	if (tstCount > 0)
-			//	{
-			//		swit = false;
-			//		tstCount = 0;
-			//	}
-			//	tstCount++;
-			//}
-
-				P3dPaintableManager.SubmitAll(P3dCommandDecal.Instance, worldPosition, worldRadius, layers, group, targetModel, targetTexture);
+			P3dPaintableManager.SubmitAll(P3dCommandDecal.Instance, worldPosition, worldRadius, layers, group, targetModel, targetTexture);
 		}
 
 		/// <summary>This method paints all pixels between the two specified points using the shape of a decal.</summary>
