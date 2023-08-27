@@ -196,31 +196,31 @@ namespace Management
 
                 if (data.Frame_Texture != null)
                 {
-                    Destroy(data.Frame_Texture);
+                    //Destroy(data.Frame_Texture);
                     data.Frame_Texture = null;
                 }
 
                 if (data.Img1_Texture != null)
                 {
-                    Destroy(data.Img1_Texture);
+                    //Destroy(data.Img1_Texture);
                     data.Img1_Texture = null;
                 }
 
                 if (data.Img2_Texture != null)
                 {
-                    Destroy(data.Img2_Texture);
+                    //Destroy(data.Img2_Texture);
                     data.Img2_Texture = null;
                 }
 
                 if (data.Img3_Texture != null)
                 {
-                    Destroy(data.Img3_Texture);
+                    //Destroy(data.Img3_Texture);
                     data.Img3_Texture = null;
                 }
 
                 if (data.Img4_Texture != null)
                 {
-                    Destroy(data.Img4_Texture);
+                    //Destroy(data.Img4_Texture);
                     data.Img4_Texture = null;
                 }
             }

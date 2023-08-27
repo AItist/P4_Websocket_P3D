@@ -24,6 +24,7 @@ public class PoseDirector : MonoBehaviour
 
     public Vector3 camera1_pos;
     public bool debug;
+    public float poseScale = 2.5f;
 
     private float[] GetPoseScale(List<Transform> riggingPoints_)
     {
@@ -140,7 +141,7 @@ public class PoseDirector : MonoBehaviour
 
         float[] diff = GetPoseScale(riggingPoints_);
         camRoot.position = centerSpine.position;
-        centerSpine.localScale = Vector3.one * diff[1] * 2.5f;
+        centerSpine.localScale = Vector3.one * diff[1] * poseScale;
         poseRoot.position = camRoot.position;
     }
 
