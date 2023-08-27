@@ -102,6 +102,8 @@ namespace Management
         public Vector3 tstImgScale1;
 
         public Vector2 customClickVector;
+
+        private Data.ImageData iData;
         
         #region Update
 
@@ -261,7 +263,7 @@ namespace Management
             //paintDecals[0].Texture = TextureInImgList[0].CopyTexture();
             if (TextureInImgList.Count == 0) { return; }
 
-            Data.ImageData iData = TextureInImgList[0];
+            iData = TextureInImgList[0];
 
             // 포즈 지시기에 포즈 적용 지시
             poseDirector.ApplyPose(iData);
@@ -359,48 +361,11 @@ namespace Management
         /// </summary>
         private async void ExportTextures()
         {
-            //// p3dPaintDecal들을 가져온다.
-            //Texture2D[] textures = GetTextures();
-
-            //Texture2D texResult = MergeTextures(textures);
-
-            //testRenderer.material.SetTexture("_MainTex", texResult);
-
-            ////-----
-            //byte[] byteArray = texResult.EncodeToPNG();
-
-            //string encodeStr = EncodeToString(byteArray);
-
-            //SerializeAndSendServer(encodeStr);
-            ////-----
-
-
-            //-----
-            //P3dPaintableTexture[] p3dTextures = _paintable.GetComponents<P3dPaintableTexture>();
-
-            //// 각각의 p3d 텍스처에서 byte[] 이미지 배열을 뽑아낸다.
-            //List<byte[]> textureData = GetTextureByteDatas(p3dTextures);
-
-            //// 모은 텍스처들을 하나의 텍스처로 &연산 한다.
-            //byte[] textureResult = IntersectByteDatas(textureData);
-
-            //string encodeStr = EncodeToString(textureResult);
-
-            ////Debug.Log("1");
-            //SerializeAndSendServer(encodeStr);
-            //-----
-
-
-
-            //_mats = _paintable.Materials;
             // 여기서 단일 paintable 기준으로 텍스처를 가져온다.
-            //_texture = _paintable.GetComponents<P3dPaintableTexture>();
             P3dPaintableTexture[] texture1 = decalContainer[0].paintable.GetComponents<P3dPaintableTexture>();
             P3dPaintableTexture[] texture2 = decalContainer[1].paintable.GetComponents<P3dPaintableTexture>();
             P3dPaintableTexture[] texture3 = decalContainer[2].paintable.GetComponents<P3dPaintableTexture>();
             P3dPaintableTexture[] texture4 = decalContainer[3].paintable.GetComponents<P3dPaintableTexture>();
-            //_texture = new P3dPaintableTexture[1];
-            //_texture[0] = decalContainer[0].texture;
 
             // 1: material마다 texture 갖고와서, 안에 있는 texture 추출 및 dict 할당
             var task1 = GetEncodedTextureAsync(texture1);
@@ -408,22 +373,41 @@ namespace Management
             var task3 = GetEncodedTextureAsync(texture3);
             var task4 = GetEncodedTextureAsync(texture4);
 
+
             await Task.WhenAll(task1, task2, task3, task4);
+            //await Task.WhenAll(tasks.ToArray());
 
             string result1 = task1.Result;
             string result2 = task2.Result;
             string result3 = task3.Result;
             string result4 = task4.Result;
-            //Dictionary<string, string> result = GetEncodedTexture(_texture);
-            //return;
 
             Dictionary<string, string> result = new Dictionary<string, string>();
             result.Add("width", "640"); result.Add("height", "480");
-            result.Add("0", result1); result.Add("1", result2) ; result.Add("2", result3); result.Add("3", result4);
+
+            foreach(int index in iData.indexes)
+            {
+                switch(index)
+                {
+                    case 0:
+                        result.Add("0", result1);
+                        break;
+
+                    case 1:
+                        result.Add("1", result2);
+                        break;
+
+                    case 2:
+                        result.Add("2", result3);
+                        break;
+
+                    case 3:
+                        result.Add("3", result4);
+                        break;
+                }
+            }
 
             // 2: string 데이터 직렬화 및 서버 전달
-            //SerializeAndSendServer(result1);    // test
-
             SerializeAndSendServer(result);
         }
 

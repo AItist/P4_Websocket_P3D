@@ -30,6 +30,8 @@ namespace Data
         public List<float> pCenter1 { get; set; }
         public List<float> pCenter2 { get; set; }
         public List<float> pCenter3 { get; set; }
+        
+        public List<int> indexes { get; set; }
 #pragma warning restore IDE1006 // 명명 스타일
 
         public byte[] Img1_decoded { get; set; }
