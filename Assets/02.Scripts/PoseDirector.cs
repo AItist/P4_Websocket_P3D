@@ -178,14 +178,15 @@ public class PoseDirector : MonoBehaviour
         if (diff[1] < 1)
         {
             diff[1] = diff[1] * 3;
+            decal.Scale = tstDScale;
         }
 
         decal.Scale = Vector3.one * diff[1];
         //camPos.localPosition = new Vector3(0, 0, -diff[1]);
-        //decal.Scale = tstDScale;
+        centerSpine.localScale = Vector3.one * diff[1] * poseScale;
 
         camRoot.position = centerSpine.position + testCamMPos;
-        centerSpine.localScale = Vector3.one;
+        
         poseRoot.position = camRoot.position;
     }
 
