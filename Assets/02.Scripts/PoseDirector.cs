@@ -6,6 +6,8 @@ using UnityEngine;
 using Environment;
 using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor.GettingStarted;
+using PaintIn3D;
+using Data;
 
 [System.Serializable]
 public struct PoseContainer
@@ -15,6 +17,7 @@ public struct PoseContainer
     public Transform poseRoot;
     public Transform rotSource;
     public Transform rotTarget;
+    public Transform camera;
     public List<Transform> riggs_pose;
 }
 
@@ -25,13 +28,16 @@ public class PoseDirector : MonoBehaviour
     public Vector3 camera1_pos;
     public bool debug;
     public float poseScale = 2.5f;
+    public Vector3 testCamMPos = Vector3.zero;
+    public List<Vector3> testDecalScale;
 
     private float[] GetPoseScale(List<Transform> riggingPoints_)
     {
         Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
         float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
-        float dist_O_sqr = 0.16158f; // 기본 모델의 어깨간 거리
+        float dist_O_sqr = 0.4f; // 기본 모델의 어깨간 거리
         float diff = dist_O_sqr / dist_sqr; // (포즈 어깨 / 기본 어깨) 비율
+        float reverse_diff = dist_sqr / dist_O_sqr;
 
         //Debug.Log("--------------------");
         //Debug.Log(dist_sqr);
@@ -40,9 +46,10 @@ public class PoseDirector : MonoBehaviour
         //Debug.Log("Rescale root");
         //Debug.Log("--------------------");
 
-        float[] result = new float[2];
+        float[] result = new float[3];
         result[0] = dist_sqr;
         result[1] = diff;
+        result[2] = reverse_diff;
 
         return result;
     }
@@ -51,19 +58,20 @@ public class PoseDirector : MonoBehaviour
     /// 포즈 적용
     /// </summary>
     /// <param name="data"></param>
-    public void ApplyPose(Data.ImageData data)
+    public void ApplyPose(Data.ImageData data, List<DecalContainer> decalContainer)
     {
-        _ApplyPose(data, 0);
-        _ApplyPose(data, 1);
-        _ApplyPose(data, 2);
-        _ApplyPose(data, 3);
+        _ApplyPose(data, 0, decalContainer);
+        _ApplyPose(data, 1, decalContainer);
+        _ApplyPose(data, 2, decalContainer);
+        _ApplyPose(data, 3, decalContainer);
     }
 
     /// <summary>
     /// 카메라별 포즈 적용
     /// </summary>
-    private void _ApplyPose(Data.ImageData data, int index)
+    private void _ApplyPose(Data.ImageData data, int index, List<DecalContainer> decalContainer)
     {
+        
         List<Transform> riggingPoints_ = null;
         Unity.Mathematics.float3[] poses = null;
         Transform centerSpine = null;
@@ -71,6 +79,9 @@ public class PoseDirector : MonoBehaviour
         Transform poseRoot = null;
         Transform rotSource = null;
         Transform rotTarget = null;
+        P3dPaintDecal decal = null;
+        Vector3 tstDScale = Vector3.one;
+        Transform camPos = null;
         if (index == 0)
         {
             riggingPoints_ = poseContainer[0].riggs_pose;
@@ -80,6 +91,11 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[0].poseRoot;
             rotSource = poseContainer[0].rotSource;
             rotTarget = poseContainer[0].rotTarget;
+            decal = decalContainer[0].paintDecal;
+
+            tstDScale = testDecalScale[0];
+
+            camPos = poseContainer[0].camera;
         }
         else if (index == 1)
         {
@@ -90,6 +106,11 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[1].poseRoot;
             rotSource = poseContainer[1].rotSource;
             rotTarget = poseContainer[1].rotTarget;
+            decal = decalContainer[1].paintDecal;
+
+            tstDScale = testDecalScale[1];
+
+            camPos = poseContainer[1].camera;
         }
         else if (index == 2)
         {
@@ -100,6 +121,11 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[2].poseRoot;
             rotSource = poseContainer[2].rotSource;
             rotTarget = poseContainer[2].rotTarget;
+            decal = decalContainer[2].paintDecal;
+
+            tstDScale = testDecalScale[2];
+
+            camPos = poseContainer[2].camera;
         }
         else if (index == 3)
         {
@@ -110,6 +136,11 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[3].poseRoot;
             rotSource = poseContainer[3].rotSource;
             rotTarget = poseContainer[3].rotTarget;
+            decal = decalContainer[3].paintDecal;
+
+            tstDScale = testDecalScale[3];
+
+            camPos = poseContainer[3].camera;
         }
 
         // 현재 포즈값이 넘어오지 않은 상태라면 중단
@@ -140,8 +171,21 @@ public class PoseDirector : MonoBehaviour
         }
 
         float[] diff = GetPoseScale(riggingPoints_);
-        camRoot.position = centerSpine.position;
-        centerSpine.localScale = Vector3.one * diff[1] * poseScale;
+        Debug.Log($"{diff[0]} /// {diff[1]} /// {diff[2]}");
+
+        //float diff_texture = diff[1] * 3;
+
+        if (diff[1] < 1)
+        {
+            diff[1] = diff[1] * 3;
+        }
+
+        decal.Scale = Vector3.one * diff[1];
+        //camPos.localPosition = new Vector3(0, 0, -diff[1]);
+        //decal.Scale = tstDScale;
+
+        camRoot.position = centerSpine.position + testCamMPos;
+        centerSpine.localScale = Vector3.one;
         poseRoot.position = camRoot.position;
     }
 

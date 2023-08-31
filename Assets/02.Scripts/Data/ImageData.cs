@@ -74,8 +74,8 @@ namespace Data
         public Unity.Mathematics.float3[] PoseArray_3 { get; set; }
 
 
-        private int imgWidth = 640;
-        private int imgHeight = 480;
+        private int imgWidth = 1024;
+        private int imgHeight = 1024;
         private int imgDepth = 3;
         public int posePointLength = GlobalSetting.POSE_RIGGINGPOINTS_COUNT; // 실수값 3차원축이라 33
 

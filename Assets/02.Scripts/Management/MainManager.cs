@@ -266,7 +266,7 @@ namespace Management
             iData = TextureInImgList[0];
 
             // 포즈 지시기에 포즈 적용 지시
-            poseDirector.ApplyPose(iData);
+            poseDirector.ApplyPose(iData, decalContainer);
             
             if (iData.Img1_Texture != null)
             {
