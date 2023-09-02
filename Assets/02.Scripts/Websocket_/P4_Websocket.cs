@@ -18,16 +18,21 @@ using Data;
 
 namespace WebSocket_
 {
+    using Management;
     using WebSocketSharp;
     using ErrorEventArgs = WebSocketSharp.ErrorEventArgs;
 
     public class P4_Websocket : MonoBehaviour
     {
         private WebSocket _webSocket;
-        public string _serverUrl = "ws://localhost:8081"; 
+        public string _serverUrl = "ws://localhost:8081";
+        public MainManager _manager;
 
-        private void Start()
+        public void Init(string url, MainManager manager)
         {
+            _serverUrl = url;
+            _manager = manager;
+
             _webSocket = new WebSocket(_serverUrl);
             _webSocket.OnOpen += OnOpen;
             _webSocket.OnMessage += OnMessage;
@@ -35,6 +40,16 @@ namespace WebSocket_
             _webSocket.OnError += OnError;
             _webSocket.Connect();
         }
+
+        //private void Start()
+        //{
+        //    _webSocket = new WebSocket(_serverUrl);
+        //    _webSocket.OnOpen += OnOpen;
+        //    _webSocket.OnMessage += OnMessage;
+        //    _webSocket.OnClose += OnClose;
+        //    _webSocket.OnError += OnError;
+        //    _webSocket.Connect();
+        //}
 
         /// <summary>
         /// 텍스처를 png 이미지로 저장한다.
@@ -106,7 +121,8 @@ namespace WebSocket_
                 //Debug.Log($"i3 {data.img_3}");
 
                 //// 주 관리자 코드로 이미지 데이터 인큐
-                Management.MainManager.Instance.EnqueueImageData(data);
+                _manager.EnqueueImageData(data);
+                //Management.MainManager.Instance.EnqueueImageData(data);
             }
             catch (Exception ex)
             {

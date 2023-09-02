@@ -38,7 +38,9 @@ namespace Management
         /// P3에서 가공된 이미지를 받아오고, \n
         /// 완성된 텍스처를 전달하기 위한 웹소켓 인스턴스
         /// </summary>
+        [Header("Websocket")]
         public WebSocket_.P4_Websocket websocket;
+        public string serverURL = "ws://localhost";
 
 
         [Header("Decal reference structure")]
@@ -58,6 +60,9 @@ namespace Management
         private Material[] _mats;
         private P3dPaintableTexture[] _texture;
 
+        
+        public WebSocket_.P4_Websocket socket;
+
         #region Start
 
         private void Initialize()
@@ -67,6 +72,7 @@ namespace Management
 
         private void Start()
         {
+            Debug.Log("Hello");
             if (instance == null)
             {
                 Instance.Initialize();
@@ -88,6 +94,7 @@ namespace Management
                 GameObject obj = new GameObject("Websocket");
                 obj.transform.parent = this.transform;
                 websocket = obj.AddComponent<WebSocket_.P4_Websocket>();
+                websocket.Init(serverURL, this);
             }
 
         }

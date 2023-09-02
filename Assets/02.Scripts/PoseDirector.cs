@@ -8,6 +8,7 @@ using Sirenix.OdinInspector;
 using Sirenix.OdinInspector.Editor.GettingStarted;
 using PaintIn3D;
 using Data;
+using System.Text;
 
 [System.Serializable]
 public struct PoseContainer
@@ -18,6 +19,8 @@ public struct PoseContainer
     public Transform rotSource;
     public Transform rotTarget;
     public Transform camera;
+
+    public Transform spine_root; // 카메라 위치 할당할 랙돌의 1번 척추
     public List<Transform> riggs_pose;
 }
 
@@ -66,12 +69,14 @@ public class PoseDirector : MonoBehaviour
         _ApplyPose(data, 3, decalContainer);
     }
 
+    public UnityEngine.UI.Text testText;
+
     /// <summary>
     /// 카메라별 포즈 적용
     /// </summary>
     private void _ApplyPose(Data.ImageData data, int index, List<DecalContainer> decalContainer)
     {
-        
+
         List<Transform> riggingPoints_ = null;
         Unity.Mathematics.float3[] poses = null;
         Transform centerSpine = null;
@@ -79,6 +84,8 @@ public class PoseDirector : MonoBehaviour
         Transform poseRoot = null;
         Transform rotSource = null;
         Transform rotTarget = null;
+
+        Transform spine_root = null;
         P3dPaintDecal decal = null;
         Vector3 tstDScale = Vector3.one;
         Transform camPos = null;
@@ -91,6 +98,8 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[0].poseRoot;
             rotSource = poseContainer[0].rotSource;
             rotTarget = poseContainer[0].rotTarget;
+
+            spine_root = poseContainer[0].spine_root;
             decal = decalContainer[0].paintDecal;
 
             tstDScale = testDecalScale[0];
@@ -106,6 +115,8 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[1].poseRoot;
             rotSource = poseContainer[1].rotSource;
             rotTarget = poseContainer[1].rotTarget;
+
+            spine_root = poseContainer[1].spine_root;
             decal = decalContainer[1].paintDecal;
 
             tstDScale = testDecalScale[1];
@@ -121,6 +132,8 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[2].poseRoot;
             rotSource = poseContainer[2].rotSource;
             rotTarget = poseContainer[2].rotTarget;
+
+            spine_root = poseContainer[2].spine_root;
             decal = decalContainer[2].paintDecal;
 
             tstDScale = testDecalScale[2];
@@ -136,6 +149,8 @@ public class PoseDirector : MonoBehaviour
             poseRoot = poseContainer[3].poseRoot;
             rotSource = poseContainer[3].rotSource;
             rotTarget = poseContainer[3].rotTarget;
+            
+            spine_root = poseContainer[3].spine_root;
             decal = decalContainer[3].paintDecal;
 
             tstDScale = testDecalScale[3];
@@ -144,7 +159,7 @@ public class PoseDirector : MonoBehaviour
         }
 
         // 현재 포즈값이 넘어오지 않은 상태라면 중단
-        if (poses == null ||  poses.Length == 0)
+        if (poses == null || poses.Length == 0)
         {
             //Debug.Log("poses 값이 할당되지 않은 상태입니다.");
             return;
@@ -171,23 +186,57 @@ public class PoseDirector : MonoBehaviour
         }
 
         float[] diff = GetPoseScale(riggingPoints_);
-        Debug.Log($"{diff[0]} /// {diff[1]} /// {diff[2]}");
+        //Debug.Log($"{diff[0]} /// {diff[1]} /// {diff[2]}");
 
+        StringBuilder sb = new StringBuilder();
+
+        //float dist_O_sqr = 0.4f; // 기본 모델의 어깨간 거리
+        //float diff = dist_O_sqr / dist_sqr; // (포즈 어깨 / 기본 어깨) 비율
+        //float reverse_diff = dist_sqr / dist_O_sqr;
+
+        Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
+        float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
+
+        sb.AppendLine("diff1: (검출포즈) / 0.4(모델 포즈 비율) 거리 비례 늘어남");
+        sb.AppendLine("diff2: 0.4(모델 포즈 비율) / (검출 포즈) 거리 비례 줄어듬");
+        sb.AppendLine($"검출 포즈 어깨 거리 : {dist_sqr}");
+        sb.AppendLine($"diff 1: {diff[1]}");
+        sb.AppendLine($"diff 2: {diff[2]}");
+        sb.AppendLine($"diff 1*2: {diff[1] * diff[2]}");
+        sb.AppendLine($"어깨 스케일 : {dist_sqr}");
+        sb.AppendLine($"중심 스케일 : {0.4f / dist_sqr}");
+        sb.AppendLine($"LS {riggingPoints_[11].position}");
+        sb.AppendLine($"RS {riggingPoints_[12].position}");
+
+
+        testText.text = sb.ToString();
         //float diff_texture = diff[1] * 3;
+
+        float decalScale = 1;
 
         if (diff[1] < 1)
         {
-            diff[1] = diff[1] * 3;
+            //diff[1] = diff[1] * 3;
+            decalScale = diff[1] * 3;
             decal.Scale = tstDScale;
+        }
+        else
+        {
+            decalScale = diff[1];
         }
 
         decal.Scale = Vector3.one * diff[1];
         //camPos.localPosition = new Vector3(0, 0, -diff[1]);
-        centerSpine.localScale = Vector3.one * diff[1] * poseScale;
 
-        camRoot.position = centerSpine.position + testCamMPos;
+        //centerSpine.localScale = Vector3.one * diff[1];
+        //centerSpine.localScale = Vector3.one * diff[1] * poseScale;
+        //centerSpine.localScale = Vector3.one * poseScale / diff[2];
+        centerSpine.localScale = Vector3.one * dist_sqr;
+
+        camRoot.position = spine_root.position;
+        //camRoot.position = centerSpine.position + testCamMPos;
         
-        poseRoot.position = camRoot.position;
+        //poseRoot.position = camRoot.position;
     }
 
     public Vector3 tstVec;
