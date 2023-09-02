@@ -76,7 +76,7 @@ public class PoseDirector : MonoBehaviour
     /// </summary>
     private void _ApplyPose(Data.ImageData data, int index, List<DecalContainer> decalContainer)
     {
-
+        
         List<Transform> riggingPoints_ = null;
         Unity.Mathematics.float3[] poses = null;
         Transform centerSpine = null;
@@ -165,73 +165,105 @@ public class PoseDirector : MonoBehaviour
             return;
         }
 
+        centerSpine.localPosition = new Vector3(0.109f, 0, 0);
         centerSpine.localScale = Vector3.one;
 
+        decal.Scale = tstDScale;
+
+        //return;
+
         // 받은 값을 riggingPoints에 적용한다.
+        riggingPoints_[33].position = poses[33];
         for (int i = 0; i < GlobalSetting.POSE_RIGGINGPOINTS_COUNT; i++)
         {
-            riggingPoints_[i].position = poses[i];
+            if (i != 33)
+            {
+                riggingPoints_[i].position = poses[i];
+            }
         }
 
-        if (debug)
-        {
-            // 전체 회전값을 가져오고 적용한다.
-            Quaternion modelRotation = GetRotation(rotSource, riggingPoints_[11], riggingPoints_[12]);
-            //rotTarget.rotation = modelRotation;
-            Debug.Log(modelRotation.eulerAngles);
-            float rotY = modelRotation.eulerAngles.y;
-            rotTarget.rotation = Quaternion.Euler(new Vector3(0, rotY + 90, 0));
-            poseRoot.rotation = Quaternion.identity;
-            poseRoot.Rotate(new Vector3(0, rotY + 90, 0));
-        }
+        //return;
+
+        //--------------------------------------------
+        //if (debug)
+        //{
+        //    // 전체 회전값을 가져오고 적용한다.
+        //    Quaternion modelRotation = GetRotation(rotSource, riggingPoints_[11], riggingPoints_[12]);
+        //    //rotTarget.rotation = modelRotation;
+        //    Debug.Log(modelRotation.eulerAngles);
+        //    float rotY = modelRotation.eulerAngles.y;
+        //    rotTarget.rotation = Quaternion.Euler(new Vector3(0, rotY + 90, 0));
+        //    poseRoot.rotation = Quaternion.identity;
+        //    poseRoot.Rotate(new Vector3(0, rotY + 90, 0));
+        //}
 
         float[] diff = GetPoseScale(riggingPoints_);
         //Debug.Log($"{diff[0]} /// {diff[1]} /// {diff[2]}");
-
-        StringBuilder sb = new StringBuilder();
 
         //float dist_O_sqr = 0.4f; // 기본 모델의 어깨간 거리
         //float diff = dist_O_sqr / dist_sqr; // (포즈 어깨 / 기본 어깨) 비율
         //float reverse_diff = dist_sqr / dist_O_sqr;
 
         Vector3 dist = riggingPoints_[12].localPosition - riggingPoints_[11].localPosition;
-        float dist_sqr = dist.sqrMagnitude; // 포즈 위치의 어깨간 거리
+        float dist_sqr = dist.magnitude; // 포즈 위치의 어깨간 거리
 
-        sb.AppendLine("diff1: (검출포즈) / 0.4(모델 포즈 비율) 거리 비례 늘어남");
-        sb.AppendLine("diff2: 0.4(모델 포즈 비율) / (검출 포즈) 거리 비례 줄어듬");
-        sb.AppendLine($"검출 포즈 어깨 거리 : {dist_sqr}");
-        sb.AppendLine($"diff 1: {diff[1]}");
-        sb.AppendLine($"diff 2: {diff[2]}");
-        sb.AppendLine($"diff 1*2: {diff[1] * diff[2]}");
+        // 로그
+        StringBuilder sb = new StringBuilder();
+        //sb.AppendLine("diff1: (검출포즈) / 0.4(모델 포즈 비율) 거리 비례 늘어남");
+        //sb.AppendLine("diff2: 0.4(모델 포즈 비율) / (검출 포즈) 거리 비례 줄어듬");
+        //sb.AppendLine($"검출 포즈 어깨 거리 : {dist_sqr}");
+        //sb.AppendLine($"diff 1: {diff[1]}");
+        //sb.AppendLine($"diff 2: {diff[2]}");
+        //sb.AppendLine($"diff 1*2: {diff[1] * diff[2]}");
         sb.AppendLine($"어깨 스케일 : {dist_sqr}");
-        sb.AppendLine($"중심 스케일 : {0.4f / dist_sqr}");
-        sb.AppendLine($"LS {riggingPoints_[11].position}");
-        sb.AppendLine($"RS {riggingPoints_[12].position}");
-
-
+        //sb.AppendLine($"중심 스케일 : {0.4f / dist_sqr}");
+        //sb.AppendLine($"LS {riggingPoints_[11].position}");
+        //sb.AppendLine($"RS {riggingPoints_[12].position}");
         testText.text = sb.ToString();
-        //float diff_texture = diff[1] * 3;
 
-        float decalScale = 1;
+        decal.Scale = Vector3.one / dist_sqr;
 
-        if (diff[1] < 1)
-        {
-            //diff[1] = diff[1] * 3;
-            decalScale = diff[1] * 3;
-            decal.Scale = tstDScale;
-        }
-        else
-        {
-            decalScale = diff[1];
-        }
+        centerSpine.localScale = Vector3.one / dist_sqr * 0.4f;
 
-        decal.Scale = Vector3.one * diff[1];
-        //camPos.localPosition = new Vector3(0, 0, -diff[1]);
+        //return;
+
+
+
+        //// 중심 위치 복귀
+        //Vector3 center_diff = -(centerSpine.localPosition - new Vector3(-0.109f, 0, 0));
+        //Debug.Log(center_diff);
+        //centerSpine.Translate(center_diff);
+
+        //centerSpine.localPosition = new Vector3(-0.109f, 0, 0);
 
         //centerSpine.localScale = Vector3.one * diff[1];
         //centerSpine.localScale = Vector3.one * diff[1] * poseScale;
         //centerSpine.localScale = Vector3.one * poseScale / diff[2];
-        centerSpine.localScale = Vector3.one * dist_sqr;
+        //centerSpine.localScale = Vector3.one * dist_sqr;
+
+        //float diff_texture = diff[1] * 3;
+
+        float decalScale = 1;
+
+        //if (diff[1] < 1)
+        //{
+        //    //diff[1] = diff[1] * 3;
+        //    decalScale = diff[1] * 3;
+            
+        //}
+        //else
+        //{
+        //    decalScale = diff[1];
+        //}
+
+        
+
+        //decal.Scale = Vector3.one * diff[1];
+        //camPos.localPosition = new Vector3(0, 0, -diff[1]);
+
+        
+
+        
 
         camRoot.position = spine_root.position;
         //camRoot.position = centerSpine.position + testCamMPos;

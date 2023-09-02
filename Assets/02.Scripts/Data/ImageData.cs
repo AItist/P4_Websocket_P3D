@@ -74,8 +74,8 @@ namespace Data
         public Unity.Mathematics.float3[] PoseArray_3 { get; set; }
 
 
-        private int imgWidth = 1024;
-        private int imgHeight = 1024;
+        private int imgWidth = 640;
+        private int imgHeight = 480;
         private int imgDepth = 3;
         public int posePointLength = GlobalSetting.POSE_RIGGINGPOINTS_COUNT; // 실수값 3차원축이라 33
 
@@ -255,6 +255,12 @@ namespace Data
                 }
             }
 
+            Unity.Mathematics.float3 lshoulder = array[11];
+            Unity.Mathematics.float3 rshoulder = array[12];
+            Unity.Mathematics.float3 lhip = array[23];
+            Unity.Mathematics.float3 rhip = array[24];
+
+            //array[33] = (lshoulder + rshoulder + lhip + rhip) / 4;
             array[33] = (array[23] + array[24]) / 2 + new Unity.Mathematics.float3(0, 0.3f, 0);
             array[34] = array[33] + new Unity.Mathematics.float3(0, 0.2f, 0);
             array[35] = array[34] + new Unity.Mathematics.float3(0, 0.2f, 0);
