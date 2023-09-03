@@ -216,12 +216,14 @@ public class PoseDirector : MonoBehaviour
         //sb.AppendLine($"diff 2: {diff[2]}");
         //sb.AppendLine($"diff 1*2: {diff[1] * diff[2]}");
         sb.AppendLine($"어깨 스케일 : {dist_sqr}");
+        sb.AppendLine($"{Vector3.one / dist_sqr}");
         //sb.AppendLine($"중심 스케일 : {0.4f / dist_sqr}");
         //sb.AppendLine($"LS {riggingPoints_[11].position}");
         //sb.AppendLine($"RS {riggingPoints_[12].position}");
         testText.text = sb.ToString();
 
-        decal.Scale = Vector3.one / dist_sqr;
+        //decal.Scale = Vector3.one / dist_sqr;
+        
 
         centerSpine.localScale = Vector3.one / dist_sqr * 0.4f;
 

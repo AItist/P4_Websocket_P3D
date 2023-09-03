@@ -61,7 +61,7 @@ namespace Management
         private P3dPaintableTexture[] _texture;
 
         
-        public WebSocket_.P4_Websocket socket;
+        //public WebSocket_.P4_Websocket socket;
 
         #region Start
 
@@ -281,7 +281,7 @@ namespace Management
                 decalContainer[0].paintDecal.IsClick = true;
                 decalContainer[0].paintDecal.Texture = iData.CopyTexture(0);
                 //decalContainer[0].paintDecal.Texture = iData.Img1_Texture;
-                Destroy(old);
+                //Destroy(old);
             }
 
             if (iData.Img2_Texture != null)
@@ -290,7 +290,7 @@ namespace Management
                 decalContainer[1].paintDecal.IsClick = true;
                 decalContainer[1].paintDecal.Texture = iData.CopyTexture(1);
                 //decalContainer[1].paintDecal.Texture = iData.Img2_Texture;
-                Destroy(old);
+                //Destroy(old);
             }
 
             if (iData.Img3_Texture != null)
@@ -299,7 +299,7 @@ namespace Management
                 decalContainer[2].paintDecal.IsClick = true;
                 decalContainer[2].paintDecal.Texture = iData.CopyTexture(2);
                 //decalContainer[2].paintDecal.Texture = iData.Img3_Texture;
-                Destroy(old);
+                //Destroy(old);
             }
 
             if (iData.Img4_Texture != null)
@@ -308,7 +308,7 @@ namespace Management
                 decalContainer[3].paintDecal.IsClick = true;
                 decalContainer[3].paintDecal.Texture = iData.CopyTexture(3);
                 //decalContainer[3].paintDecal.Texture = iData.Img4_Texture;
-                Destroy(old);
+                //Destroy(old);
             }
 
             // 입력 이벤트 발생 준비
