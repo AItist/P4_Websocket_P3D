@@ -168,6 +168,7 @@ namespace Management
             // -----
             iData.stage3_SetTexture = true;
 
+            //TextureInImgList.Add(iData);
             if (iData.IsTextureExisted())
             {
                 TextureInImgList.Add(iData);
@@ -280,8 +281,14 @@ namespace Management
                 Texture old = decalContainer[0].paintDecal.Texture;
                 decalContainer[0].paintDecal.IsClick = true;
                 decalContainer[0].paintDecal.Texture = iData.CopyTexture(0);
+                //decalContainer[0].paintDecal.Texture = iData.Get_Texture(0);
                 //decalContainer[0].paintDecal.Texture = iData.Img1_Texture;
-                //Destroy(old);
+
+                Destroy(iData.Img1_Texture);
+                iData.Img1_Texture = null;
+
+                Destroy(old);
+                old = null;
             }
 
             if (iData.Img2_Texture != null)
@@ -289,8 +296,14 @@ namespace Management
                 Texture old = decalContainer[1].paintDecal.Texture;
                 decalContainer[1].paintDecal.IsClick = true;
                 decalContainer[1].paintDecal.Texture = iData.CopyTexture(1);
+                //decalContainer[1].paintDecal.Texture = iData.Get_Texture(1);
                 //decalContainer[1].paintDecal.Texture = iData.Img2_Texture;
-                //Destroy(old);
+
+                Destroy(iData.Img2_Texture);
+                iData.Img2_Texture = null;
+
+                Destroy(old);
+                old = null;
             }
 
             if (iData.Img3_Texture != null)
@@ -298,8 +311,14 @@ namespace Management
                 Texture old = decalContainer[2].paintDecal.Texture;
                 decalContainer[2].paintDecal.IsClick = true;
                 decalContainer[2].paintDecal.Texture = iData.CopyTexture(2);
+                //decalContainer[2].paintDecal.Texture = iData.Get_Texture(2);
                 //decalContainer[2].paintDecal.Texture = iData.Img3_Texture;
-                //Destroy(old);
+
+                Destroy(iData.Img3_Texture);
+                iData.Img3_Texture = null;
+
+                Destroy(old);
+                old = null;
             }
 
             if (iData.Img4_Texture != null)
@@ -307,8 +326,14 @@ namespace Management
                 Texture old = decalContainer[3].paintDecal.Texture;
                 decalContainer[3].paintDecal.IsClick = true;
                 decalContainer[3].paintDecal.Texture = iData.CopyTexture(3);
+                //decalContainer[3].paintDecal.Texture = iData.Get_Texture(3);
                 //decalContainer[3].paintDecal.Texture = iData.Img4_Texture;
-                //Destroy(old);
+
+                Destroy(iData.Img4_Texture);
+                iData.Img4_Texture = null;
+
+                Destroy(old);
+                old = null;
             }
 
             // 입력 이벤트 발생 준비

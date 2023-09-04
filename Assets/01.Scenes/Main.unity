@@ -2066,7 +2066,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   websocket: {fileID: 0}
-  serverURL: ws://192.168.50.50:8072
+  serverURL: ws://localhost:8072
   decalContainer:
   - paintDecal: {fileID: 2008047256}
     paintable: {fileID: 2123505073}
@@ -2095,7 +2095,6 @@ MonoBehaviour:
   cwInputManager: {fileID: 1659173985}
   _paintable: {fileID: 2123505073}
   poseDirector: {fileID: 139851383}
-  socket: {fileID: 0}
   tstX: 0
   tstY: 0
   tstWidth: 640
@@ -3126,7 +3125,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &211359075
 Transform:
   m_ObjectHideFlags: 0
@@ -14393,7 +14392,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &980858854
 Transform:
   m_ObjectHideFlags: 0

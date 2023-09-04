@@ -74,8 +74,8 @@ namespace Data
         public Unity.Mathematics.float3[] PoseArray_3 { get; set; }
 
 
-        private int imgWidth = 640;
-        private int imgHeight = 480;
+        private int imgWidth = 1024;
+        private int imgHeight = 1024;
         private int imgDepth = 3;
         public int posePointLength = GlobalSetting.POSE_RIGGINGPOINTS_COUNT; // 실수값 3차원축이라 33
 
@@ -361,6 +361,26 @@ namespace Data
 
         // =====
 
+        public Texture2D Get_Texture(int index)
+        {
+            switch(index)
+            {
+                case 0:
+                    return Unity_CreateTexture2D(Img1_decoded, imgWidth, imgHeight, imgDepth);
+
+                case 1:
+                    return Unity_CreateTexture2D(Img2_decoded, imgWidth, imgHeight, imgDepth);
+
+                case 2:
+                    return Unity_CreateTexture2D(Img3_decoded, imgWidth, imgHeight, imgDepth);
+
+                case 3:
+                    return Unity_CreateTexture2D(Img4_decoded, imgWidth, imgHeight, imgDepth);
+            }
+
+            return null;
+        }
+
         public void Unity_SetTexture(int tstX, int tstY, int tstWidth, int tstHeight)
         {
             //var task1 = Unity_CreateTexture2DAsync(Img1_decoded, imgWidth, imgHeight, imgDepth);
@@ -482,24 +502,26 @@ namespace Data
 
         public bool IsTextureExisted()
         {
-            for (int i = 0; i < cam_count; i++)
+            //Debug.Log(indexes);
+            foreach(int i in indexes)
             {
-                if (i == 0 && Img1_Texture == null)
+                //Debug.Log(i);
+                if (i == 0 && Img1_decoded == null)
                 {
                     return false;
                 }
 
-                if (i == 1 && Img2_Texture == null)
+                if (i == 1 && Img2_decoded == null)
                 {
                     return false;
                 }
 
-                if (i == 2 && Img3_Texture == null)
+                if (i == 2 && Img3_decoded == null)
                 {
                     return false;
                 }
 
-                if (i == 3 && Img4_Texture == null)
+                if (i == 3 && Img4_decoded == null)
                 {
                     return false;
                 }
@@ -519,7 +541,7 @@ namespace Data
             // Step 3: Create a new Texture2D and load the decompressed data
             Texture2D recoveredTexture = new Texture2D(tWidth, tHeight, TextureFormat.RGB24, false);
             recoveredTexture.LoadRawTextureData(frame_decoded);
-            //recoveredTexture.Apply();
+            recoveredTexture.Apply();
 
             return recoveredTexture;
         }
@@ -563,6 +585,8 @@ namespace Data
 
             outputTexture.SetPixels(pixels);
             outputTexture.Apply();
+
+            
 
             return outputTexture;
         }

@@ -222,8 +222,8 @@ public class PoseDirector : MonoBehaviour
         //sb.AppendLine($"RS {riggingPoints_[12].position}");
         testText.text = sb.ToString();
 
-        //decal.Scale = Vector3.one / dist_sqr;
-        
+        decal.Scale = new Vector3(1.5f, 1.2f, 1) / dist_sqr;
+
 
         centerSpine.localScale = Vector3.one / dist_sqr * 0.4f;
 
