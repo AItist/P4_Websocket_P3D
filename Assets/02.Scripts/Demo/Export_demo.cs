@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using PaintIn3D;
 using UnityEditor;
-using static PaintIn3D.P3dWindow;
+//using static PaintIn3D.P3dWindow;
 using System;
 using WebSocket_;
 
@@ -72,12 +72,12 @@ public class Export_demo : MonoBehaviour
 
                         //System.IO.File.WriteAllBytes(finalPath, GetData(paintableTexture, Settings.DefaultTextureFormat));
 
-                        byte[] imgData = GetData(paintableTexture, Settings.DefaultTextureFormat);
-                        string encodeStr = Convert.ToBase64String(imgData);
+                        ////byte[] imgData = GetData(paintableTexture, PaintIn3D.P3dWindow.Settings.DefaultTextureFormat);
+                        //string encodeStr = Convert.ToBase64String(imgData);
 
                         //Debug.Log(encodeStr);
 
-                        sock.Send_Message(encodeStr);
+                        //sock.Send_Message(encodeStr);
                         //AssetDatabase.ImportAsset(finalPath);
 
                         //paintableTexture.Output = AssetDatabase.AssetPathToGUID(finalPath);
@@ -91,25 +91,25 @@ public class Export_demo : MonoBehaviour
         }
     }
 
-    private string GetExtension(ExportTextureFormat f)
-    {
-        switch (Settings.DefaultTextureFormat)
-        {
-            case ExportTextureFormat.PNG: return "png";
-            case ExportTextureFormat.TGA: return "tga";
-        }
+    //private string GetExtension(PaintIn3D.P3dWindow.ExportTextureFormat f)
+    //{
+    //    switch (PaintIn3D.P3dWindow.Settings.DefaultTextureFormat)
+    //    {
+    //        case PaintIn3D.P3dWindow.ExportTextureFormat.PNG: return "png";
+    //        case PaintIn3D.P3dWindow.ExportTextureFormat.TGA: return "tga";
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 
-    private byte[] GetData(P3dPaintableTexture t, ExportTextureFormat f)
-    {
-        switch (Settings.DefaultTextureFormat)
-        {
-            case ExportTextureFormat.PNG: return t.GetPngData();
-            case ExportTextureFormat.TGA: return t.GetTgaData();
-        }
+    //private byte[] GetData(P3dPaintableTexture t, PaintIn3D.P3dWindow.ExportTextureFormat f)
+    //{
+    //    switch (PaintIn3D.P3dWindow.Settings.DefaultTextureFormat)
+    //    {
+    //        case PaintIn3D.P3dWindow.ExportTextureFormat.PNG: return t.GetPngData();
+    //        case PaintIn3D.P3dWindow.ExportTextureFormat.TGA: return t.GetTgaData();
+    //    }
 
-        return null;
-    }
+    //    return null;
+    //}
 }
