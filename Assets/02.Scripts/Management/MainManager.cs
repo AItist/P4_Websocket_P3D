@@ -124,25 +124,12 @@ namespace Management
                 cam.localPosition = new Vector3(cur.x, cur.y + 0.1f, cur.z);
             }
 
-            if (Input.GetKeyDown(KeyCode.DownArrow))
+            if (Input.GetKeyDown(KeyCode.Q))
             {
-                Transform cam = decalContainer[1].originCamera.transform;
-                Vector3 cur = cam.localPosition;
-                cam.localPosition = new Vector3(cur.x, cur.y - 0.1f, cur.z);
-            }
-
-            if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                Transform cam = decalContainer[1].originCamera.transform;
-                Vector3 cur = cam.localPosition;
-                cam.localPosition = new Vector3(cur.x - 0.1f, cur.y, cur.z);
-            }
-
-            if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                Transform cam = decalContainer[1].originCamera.transform;
-                Vector3 cur = cam.localPosition;
-                cam.localPosition = new Vector3(cur.x + 0.1f, cur.y, cur.z);
+                Application.Quit();
+                //Transform cam = decalContainer[1].originCamera.transform;
+                //Vector3 cur = cam.localPosition;
+                //cam.localPosition = new Vector3(cur.x, cur.y - 0.1f, cur.z);
             }
 
             if (Input.GetKeyDown(KeyCode.Space))
