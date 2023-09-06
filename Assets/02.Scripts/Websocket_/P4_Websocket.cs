@@ -53,13 +53,7 @@ namespace WebSocket_
 
         private void ConnectToWebSocket()
         {
-            //if (_currentAttempts >= _maxAttempts)
-            //{
-            //    Debug.Log("Max connection attempts reached. Stopping reconnection.");
-            //    return;
-            //}
-
-            Debug.Log("Attempt to Connect");
+            Debug.Log($"Attempt to Connect {attemptCount}");
 
             if (_webSocket != null)
             {
@@ -128,6 +122,7 @@ namespace WebSocket_
 
         private void OnOpen(object sender, EventArgs e)
         {
+            attemptCount = 0;
             Debug.Log("WebSocket opened.");
         }
 
@@ -178,6 +173,7 @@ namespace WebSocket_
         private void OnError(object sender, ErrorEventArgs e)
         {
             Debug.LogError("WebSocket error: " + e.Message);
+            _webSocket.Close();
 
             Init();
             //ConnectToWebSocket();
