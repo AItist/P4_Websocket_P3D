@@ -44,6 +44,7 @@ public class Export_demo : MonoBehaviour
     {
         //Debug.Log("Hello");
 
+#if UNITY_EDITOR
         for (int i = 0; i < materials.Length; i++)
         {
             var material = materials[i];
@@ -89,6 +90,7 @@ public class Export_demo : MonoBehaviour
                 }
             }
         }
+#endif
     }
 
     //private string GetExtension(PaintIn3D.P3dWindow.ExportTextureFormat f)

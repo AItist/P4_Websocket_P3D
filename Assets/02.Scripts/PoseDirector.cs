@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using Environment;
 using Sirenix.OdinInspector;
-using Sirenix.OdinInspector.Editor.GettingStarted;
+//using Sirenix.OdinInspector.Editor.GettingStarted;
 using PaintIn3D;
 using Data;
 using System.Text;

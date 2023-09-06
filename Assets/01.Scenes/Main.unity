@@ -2066,7 +2066,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   websocket: {fileID: 0}
-  serverURL: ws://localhost:8072
+  serverURL: ws://192.168.50.50:8072
   decalContainer:
   - paintDecal: {fileID: 2008047256}
     paintable: {fileID: 2123505073}
@@ -24905,7 +24905,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1814756876
 MonoBehaviour:
   m_ObjectHideFlags: 0

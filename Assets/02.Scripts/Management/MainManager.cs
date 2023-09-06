@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
-//using static PaintIn3D.P3dWindow; 
+//using static PaintIn3D.P3dWindow;
 
 namespace Management
 {
@@ -603,7 +603,7 @@ namespace Management
         /// <returns></returns>
         private byte[] GetPaintableTexture(P3dPaintableTexture paintableTexture)
         {
-            return GetData(paintableTexture, PaintIn3D.P3dWindow.Settings.DefaultTextureFormat);
+            return GetData(paintableTexture);
         }
 
         /// <summary>
@@ -613,15 +613,16 @@ namespace Management
         /// <param name="f"></param>
         /// <returns></returns>
         /// //using static PaintIn3D.P3dWindow; 
-        private byte[] GetData(P3dPaintableTexture t, PaintIn3D.P3dWindow.ExportTextureFormat f)
+        private byte[] GetData(P3dPaintableTexture t)
         {
-            switch (PaintIn3D.P3dWindow.Settings.DefaultTextureFormat)
-            {
-                case PaintIn3D.P3dWindow.ExportTextureFormat.PNG: return t.GetPngData();
-                case PaintIn3D.P3dWindow.ExportTextureFormat.TGA: return t.GetTgaData();
-            }
+            return t.GetPngData();
+            //switch (PaintIn3D.P3dWindow.Settings.DefaultTextureFormat)
+            //{
+            //    case PaintIn3D.P3dWindow.ExportTextureFormat.PNG: return t.GetPngData();
+            //    case PaintIn3D.P3dWindow.ExportTextureFormat.TGA: return t.GetTgaData();
+            //}
 
-            return null;
+            //return null;
         }
 
         /// <summary>
