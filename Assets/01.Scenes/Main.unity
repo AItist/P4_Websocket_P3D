@@ -2066,7 +2066,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   websocket: {fileID: 0}
-  serverURL: ws://192.168.0.40:8072
+  serverURL: ws://localhost:8072
   decalContainer:
   - paintDecal: {fileID: 2008047256}
     paintable: {fileID: 2123505073}

@@ -15,6 +15,7 @@ using System.Drawing;
 using PaintIn3D;
 
 using Data;
+using System.Threading.Tasks;
 
 namespace WebSocket_
 {
@@ -27,11 +28,47 @@ namespace WebSocket_
         private WebSocket _webSocket;
         public string _serverUrl = "ws://localhost:8081";
         public MainManager _manager;
+        private int attemptCount = 0;
 
-        public void Init(string url, MainManager manager)
+        public async void Init(string url, MainManager manager)
         {
             _serverUrl = url;
             _manager = manager;
+
+            attemptCount++;
+            await Task.Run(() => ConnectToWebSocket());
+            //_webSocket = new WebSocket(_serverUrl);
+            //_webSocket.OnOpen += OnOpen;
+            //_webSocket.OnMessage += OnMessage;
+            //_webSocket.OnClose += OnClose;
+            //_webSocket.OnError += OnError;
+            //_webSocket.Connect();
+        }
+
+        public async void Init()
+        {
+            attemptCount++;
+            await Task.Run(() => ConnectToWebSocket());
+        }
+
+        private void ConnectToWebSocket()
+        {
+            //if (_currentAttempts >= _maxAttempts)
+            //{
+            //    Debug.Log("Max connection attempts reached. Stopping reconnection.");
+            //    return;
+            //}
+
+            Debug.Log("Attempt to Connect");
+
+            if (_webSocket != null)
+            {
+                _webSocket.OnOpen -= OnOpen;
+                _webSocket.OnMessage -= OnMessage;
+                _webSocket.OnClose -= OnClose;
+                _webSocket.OnError -= OnError;
+                _webSocket.Close();
+            }
 
             _webSocket = new WebSocket(_serverUrl);
             _webSocket.OnOpen += OnOpen;
@@ -133,11 +170,17 @@ namespace WebSocket_
         private void OnClose(object sender, CloseEventArgs e)
         {
             Debug.Log("WebSocket closed.");
+
+            Init();
+            //ConnectToWebSocket();
         }
 
         private void OnError(object sender, ErrorEventArgs e)
         {
             Debug.LogError("WebSocket error: " + e.Message);
+
+            Init();
+            //ConnectToWebSocket();
         }
 
         public void Send_Message(string message)
