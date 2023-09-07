@@ -41,6 +41,7 @@ namespace Management
         [Header("Websocket")]
         public WebSocket_.P4_Websocket websocket;
         public string serverURL = "ws://localhost";
+        public bool isPlaying = false;
 
 
         [Header("Decal reference structure")]
@@ -88,13 +89,14 @@ namespace Management
                 TextureInImgList = new List<Data.ImageData>();
             }
 
+            isPlaying = true;
             // 昆家南 积己 瘤矫
             if (websocket == null)
             {
                 GameObject obj = new GameObject("Websocket");
                 obj.transform.parent = this.transform;
                 websocket = obj.AddComponent<WebSocket_.P4_Websocket>();
-                websocket.Init(serverURL, this);
+                websocket.Init(serverURL, this, isPlaying);
             }
 
         }
@@ -651,5 +653,12 @@ namespace Management
         #endregion
 
         #endregion
+
+        private void OnDestroy()
+        {
+            if (websocket == null) return;
+
+            websocket._isPlaying = false;
+        }
     }
 }

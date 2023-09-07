@@ -29,11 +29,13 @@ namespace WebSocket_
         public string _serverUrl = "ws://localhost:8081";
         public MainManager _manager;
         private int attemptCount = 0;
+        public bool _isPlaying = false;
 
-        public async void Init(string url, MainManager manager)
+        public async void Init(string url, MainManager manager, bool isPlaying)
         {
             _serverUrl = url;
             _manager = manager;
+            _isPlaying = isPlaying;
 
             attemptCount++;
             await Task.Run(() => ConnectToWebSocket());
@@ -54,6 +56,12 @@ namespace WebSocket_
         private void ConnectToWebSocket()
         {
             Debug.Log($"Attempt to Connect {attemptCount}");
+
+            if (!_isPlaying)
+            {
+                Debug.Log("Program is not playing");
+                return;
+            }
 
             if (_webSocket != null)
             {
@@ -166,7 +174,14 @@ namespace WebSocket_
         {
             Debug.Log("WebSocket closed.");
 
-            Init();
+            if(_isPlaying)
+            {
+                Init();
+            }
+            else
+            {
+                Debug.Log("Program is not playing");
+            }
             //ConnectToWebSocket();
         }
 
@@ -175,7 +190,14 @@ namespace WebSocket_
             Debug.LogError("WebSocket error: " + e.Message);
             _webSocket.Close();
 
-            Init();
+            if (_isPlaying)
+            {
+                Init();
+            }
+            else
+            {
+                Debug.Log("Program is not playing");
+            }
             //ConnectToWebSocket();
         }
 
