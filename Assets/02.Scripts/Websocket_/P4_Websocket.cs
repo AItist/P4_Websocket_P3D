@@ -80,16 +80,6 @@ namespace WebSocket_
             _webSocket.Connect();
         }
 
-        //private void Start()
-        //{
-        //    _webSocket = new WebSocket(_serverUrl);
-        //    _webSocket.OnOpen += OnOpen;
-        //    _webSocket.OnMessage += OnMessage;
-        //    _webSocket.OnClose += OnClose;
-        //    _webSocket.OnError += OnError;
-        //    _webSocket.Connect();
-        //}
-
         /// <summary>
         /// 텍스처를 png 이미지로 저장한다.
         /// </summary>
@@ -146,6 +136,7 @@ namespace WebSocket_
             try
             {
                 ImageData data = JsonConvert.DeserializeObject<ImageData>(e.Data);
+                data.Init(_manager.convertWidth, _manager.convertHeight);
                 data.ConvertImgString_to_byteArray();
                 data.ConvertPoseString_to_float3Array();
                 data.ConvertPoseCenter_to_intArray();
@@ -160,7 +151,7 @@ namespace WebSocket_
                 //Debug.Log($"i2 {data.img_2}");
                 //Debug.Log($"i3 {data.img_3}");
 
-                //// 주 관리자 코드로 이미지 데이터 인큐
+                // 주 관리자 코드로 이미지 데이터 인큐
                 _manager.EnqueueImageData(data);
                 //Management.MainManager.Instance.EnqueueImageData(data);
             }

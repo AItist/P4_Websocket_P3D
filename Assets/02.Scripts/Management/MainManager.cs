@@ -42,7 +42,8 @@ namespace Management
         public WebSocket_.P4_Websocket websocket;
         public string serverURL = "ws://localhost";
         public bool isPlaying = false;
-
+        public int convertWidth = 1024;
+        public int convertHeight = 1024;
 
         [Header("Decal reference structure")]
         /// <summary>

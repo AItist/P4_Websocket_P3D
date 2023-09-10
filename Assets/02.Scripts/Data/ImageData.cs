@@ -84,6 +84,11 @@ namespace Data
         public bool stage3_SetTexture = false; // 관리자 코드에서 Unity_SetTexture 실행 후 변경
 
         // =====
+        public void Init(int width, int height)
+        {
+            imgWidth = width;
+            imgHeight = height;
+        }
 
         /// <summary>
         /// 문자열 이미지를 byte[] 배열로 변환한다.
